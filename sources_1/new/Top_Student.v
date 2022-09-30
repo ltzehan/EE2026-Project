@@ -47,10 +47,13 @@ module Top_Student (
         );
     
     assign led_clk = sw[0] ? clk10k : clk20k;
-    always @(posedge led_clk)
+    reg [4:0] led_msb; // 5 MSB of led 
+    wire [15:0] oled_data = led_msb << 11;
+    always @(posedge led_clk) begin
         led <= mic_in;
-        
-    wire [15:0] oled_data = 16'h07E0;
+        led_msb <= mic_in[11:7];
+    end
+    
     wire frame_begin, sending_pixels, sample_pixel;
     wire [12:0] pixel_index;
     Oled_Display oled_display(
