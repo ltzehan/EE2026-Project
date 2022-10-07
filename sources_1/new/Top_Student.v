@@ -29,9 +29,9 @@ module Top_Student (
     // 20kHz clock
     wire clk20k;
     fclk #(.khz(20)) clk_20khz(CLK, clk20k);
-    // 10kHz clock
-    wire clk10k;
-    fclk #(.khz(10)) clk_10khz(CLK, clk10k);
+    // 10Hz clock
+    wire clk10;
+    fclk #(.khz(0.01)) clk_10hz(CLK, clk10);
     // 6.25MHz clock
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
@@ -46,7 +46,9 @@ module Top_Student (
         .sample(mic_in)
         );
     
-    assign led_clk = sw[0] ? clk10k : clk20k;
+    wire led_clk;
+    assign led_clk = sw[0] ? clk10 : clk20k;
+    
     reg [4:0] led_msb; // 5 MSB of led 
     wire [15:0] oled_data = led_msb << 11;
     always @(posedge led_clk) begin
