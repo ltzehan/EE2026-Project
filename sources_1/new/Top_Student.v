@@ -73,15 +73,28 @@ module Top_Student (
         );
         
     wire border_red, border_orange;
-    draw_box(.pixel(pixel_index), .x1(4), .y1(4), .x2(OLED_W-4), .y2(OLED_H-4), .active(border_red));
-    border_orange
-    draw_box(.pixel(pixel_index), .x1(8), .y1(8), .x2(OLED_W-8), .y2(OLED_H-8), .active(border_orange));
+    draw_box(.pixel(pixel_index), .x1(4), .y1(4), .x2(OLED_W-4), .y2(OLED_H-4), .th(1), .active(border_red));
+    draw_box(.pixel(pixel_index), .x1(8), .y1(8), .x2(OLED_W-8), .y2(OLED_H-8), .th(3), .active(border_orange));
      
+    wire border_green_1, border_green_2, border_green_3, border_green_4;
+    draw_box(.pixel(pixel_index), .x1(12), .y1(12), .x2(OLED_W-12), .y2(OLED_H-12), .th(1), .active(border_green_1));
+    draw_box(.pixel(pixel_index), .x1(14), .y1(14), .x2(OLED_W-14), .y2(OLED_H-14), .th(1), .active(border_green_2));
+    draw_box(.pixel(pixel_index), .x1(16), .y1(16), .x2(OLED_W-16), .y2(OLED_H-16), .th(1), .active(border_green_3));
+    draw_box(.pixel(pixel_index), .x1(18), .y1(18), .x2(OLED_W-18), .y2(OLED_H-18), .th(1), .active(border_green_4));
+
     always @(posedge clk25m) begin
         if (border_red)
             oled_data <= {{5{1'b1}}, {11{1'b0}}};
         else if (border_orange)
             oled_data <= {{5{1'b1}}, 6'b101001, {5{1'b0}}};
+        else if (border_green_1)
+            oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+        else if (border_green_2)
+            oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+        else if (border_green_3)
+            oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+        else if (border_green_4)
+            oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
         else
             oled_data <= 16'b0;
     end

@@ -49,16 +49,17 @@ module draw_box(
     input [7:0] y1,
     input [7:0] x2,
     input [7:0] y2,
+    input [7:0] th, // thickness
     output active
     );
     
     wire [7:0] px, py;
     px_to_xy(pixel, px, py);
     
-    wire h1 = (py == y1) && (px >= x1 && px <= x2);
-    wire h2 = (py == y2) && (px >= x1 && px <= x2);
-    wire v1 = (px == x1) && (py >= y1 && py <= y2);
-    wire v2 = (px == x2) && (py >= y1 && py <= y2);
+    wire h1 = (py - y1 < th) && (px >= x1 && px <= x2);
+    wire h2 = (y2 - py < th) && (px >= x1 && px <= x2);
+    wire v1 = (px - x1 < th) && (py >= y1 && py <= y2);
+    wire v2 = (x2 - px < th) && (py >= y1 && py <= y2);
     
     assign active = h1 | h2 | v1 | v2;
     
