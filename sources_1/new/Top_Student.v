@@ -14,7 +14,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-
 module Top_Student (
     input CLK,
     input [1:0] sw,
@@ -35,6 +34,9 @@ module Top_Student (
     // 6.25MHz clock
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
+    // 25MHz clock
+    wire clk25m;
+    fclk #(.khz(25000)) clk_25mhz(CLK, clk25m);
     
     wire [11:0] mic_in;
     Audio_Capture audio_capture(
@@ -50,12 +52,12 @@ module Top_Student (
     assign led_clk = sw[0] ? clk10 : clk20k;
     
     reg [4:0] led_msb; // 5 MSB of led 
-    wire [15:0] oled_data = led_msb << 11;
     always @(posedge led_clk) begin
         led <= mic_in;
         led_msb <= mic_in[11:7];
     end
     
+    reg [15:0] oled_data;
     wire frame_begin, sending_pixels, sample_pixel;
     wire [12:0] pixel_index;
     Oled_Display oled_display(
@@ -69,5 +71,19 @@ module Top_Student (
         .cs(JX[0]), .sdin(JX[1]), .sclk(JX[2]), .d_cn(JX[3]), .resn(JX[4]), .vccen(JX[5]), .pmoden(JX[6]),
         .teststate(0)
         );
+        
+    wire border_red, border_orange;
+    draw_box(.pixel(pixel_index), .x1(4), .y1(4), .x2(OLED_W-4), .y2(OLED_H-4), .active(border_red));
+    border_orange
+    draw_box(.pixel(pixel_index), .x1(8), .y1(8), .x2(OLED_W-8), .y2(OLED_H-8), .active(border_orange));
+     
+    always @(posedge clk25m) begin
+        if (border_red)
+            oled_data <= {{5{1'b1}}, {11{1'b0}}};
+        else if (border_orange)
+            oled_data <= {{5{1'b1}}, 6'b101001, {5{1'b0}}};
+        else
+            oled_data <= 16'b0;
+    end
 
 endmodule

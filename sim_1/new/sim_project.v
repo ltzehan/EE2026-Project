@@ -33,12 +33,6 @@ module sim_project(
         #5 CLK <= ~CLK;
     end
     
-    wire J_MIC3_Pin3, J_MIC3_Pin1, J_MIC3_Pin4;
-    Top_Student project(
-        .CLK(CLK),
-        .J_MIC3_Pin3(J_MIC3_Pin3),
-        .J_MIC3_Pin1(J_MIC3_Pin1),
-        .J_MIC3_Pin4(J_MIC3_Pin4)
-        );
+    reg x, y
     
 endmodule
