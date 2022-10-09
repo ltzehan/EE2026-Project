@@ -51,19 +51,16 @@ module task_4(
     draw_box(.pixel(pixel_index), .x1(16), .y1(16), .x2(OLED_W-16), .y2(OLED_H-16), .th(1), .active(border_green_3));
     draw_box(.pixel(pixel_index), .x1(18), .y1(18), .x2(OLED_W-18), .y2(OLED_H-18), .th(1), .active(border_green_4));
     
-    wire d_btnU;
-    debouncer(CLK, btnU, d_btnU);
-    
     reg [2:0] state = 0;
     reg needs_reset = 0;
     reg [31:0] reset_ctr = 0;
     
     // Button press
-    reg prev_d_btnU = 0;
+    reg prev_btnU = 0;
     always @(posedge CLK) begin
-       prev_d_btnU <= d_btnU;
-       // Rising edge of d_btnU
-       if (~prev_d_btnU & d_btnU) begin
+       prev_btnU <= btnU;
+       // Rising edge of btnU
+       if (~prev_btnU & btnU) begin
            if (!needs_reset) begin
                state <= (state == 4) ? 0 : state+1;
                needs_reset <= 1;

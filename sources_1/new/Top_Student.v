@@ -17,12 +17,11 @@
 module Top_Student (
     input CLK,
     input [1:0] sw,
-    input btnU,
-    input  J_MIC3_Pin3,   // Connect from this signal to Audio_Capture.v
-    output J_MIC3_Pin1,   // Connect to this signal from Audio_Capture.v
-    output J_MIC3_Pin4,    // Connect to this signal from Audio_Capture.v
+    input btnU, input btnL, input btnR, input btnD, input btnC, 
+    input J_MIC3_Pin3, output J_MIC3_Pin1, output J_MIC3_Pin4,
     output [6:0] JX,
-    output [15:0] led
+    output [15:0] led,
+    output [6:0] seg, output [3:0] an
     );
 
     // 20kHz clock
@@ -31,6 +30,13 @@ module Top_Student (
     // 6.25MHz clock
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
+    
+    wire d_btnU, d_btnL, d_btnR, d_btnD, d_btnC;
+    debouncer(CLK, btnU, d_btnU);
+    debouncer(CLK, btnL, d_btnL);
+    debouncer(CLK, btnR, d_btnR);
+    debouncer(CLK, btnD, d_btnD);
+    debouncer(CLK, btnC, d_btnC);
     
     wire [11:0] mic_out;
     Audio_Capture audio_capture(
@@ -57,6 +63,19 @@ module Top_Student (
         .teststate(0)
         );
 
+    // 0: Menu inactive
+    // 1: OLED Task A (4.2A)
+    // 2: OLED Task B (4.2B)
+    // 3: AVI Task (4.2C)
+    reg [3:0] menu_state = 0;
+    menu(
+        .CLK(CLK),
+        .state(menu_state),
+        .btnL(d_btnL),
+        .btnR(d_btnR),
+        .btnC(d_btnC)
+        );
+
     wire task_4a_led;
     wire [4:0] task_4c_led;
     wire [15:0] task_oled_data;
@@ -67,7 +86,7 @@ module Top_Student (
     
     task_4(
         .CLK(CLK),
-        .btnU(btnU),
+        .btnU(d_btnU),
         .pixel_index(pixel_index),
         .mic_out(mic_out),
         .task_4a_led(task_4a_led),
