@@ -17,12 +17,12 @@
 module Top_Student (
     input CLK,
     input [1:0] sw,
-    input oled_reset,
+    input btnU,
     input  J_MIC3_Pin3,   // Connect from this signal to Audio_Capture.v
     output J_MIC3_Pin1,   // Connect to this signal from Audio_Capture.v
     output J_MIC3_Pin4,    // Connect to this signal from Audio_Capture.v
     output [6:0] JX,
-    output reg [11:0] led
+    output reg [15:0] led
     );
 
     // 20kHz clock
@@ -48,21 +48,12 @@ module Top_Student (
         .sample(mic_in)
         );
     
-    wire led_clk;
-    assign led_clk = sw[0] ? clk10 : clk20k;
-    
-    reg [4:0] led_msb; // 5 MSB of led 
-    always @(posedge led_clk) begin
-        led <= mic_in;
-        led_msb <= mic_in[11:7];
-    end
-    
     reg [15:0] oled_data;
     wire frame_begin, sending_pixels, sample_pixel;
     wire [12:0] pixel_index;
     Oled_Display oled_display(
         .clk(clk6p25m), 
-        .reset(oled_reset), 
+        .reset(0), 
         .frame_begin(frame_begin), 
         .sending_pixels(sending_pixels),
         .sample_pixel(sample_pixel),
@@ -82,18 +73,47 @@ module Top_Student (
     draw_box(.pixel(pixel_index), .x1(16), .y1(16), .x2(OLED_W-16), .y2(OLED_H-16), .th(1), .active(border_green_3));
     draw_box(.pixel(pixel_index), .x1(18), .y1(18), .x2(OLED_W-18), .y2(OLED_H-18), .th(1), .active(border_green_4));
 
+    wire d_btnU;
+    debouncer(CLK, btnU, d_btnU);
+
+    reg [7:0] state = 0;
+    reg needs_reset = 0;
+    reg [31:0] reset_ctr = 0;
+
+    reg prev_d_btnU = 0;
+    always @(posedge CLK) begin
+        prev_d_btnU <= d_btnU;
+        // Rising edge of d_btnU
+        if (~prev_d_btnU & d_btnU) begin
+            if (!needs_reset) begin
+                state <= (state == 4) ? 0 : state+1;
+                needs_reset <= 1;
+                led[14] <= 1;
+            end
+        end
+    
+        if (needs_reset) begin
+            // 3s delay
+            reset_ctr <= (reset_ctr == 299_999_999) ? 0 : reset_ctr+1;
+            if (reset_ctr == 299_999_999) begin
+                needs_reset <= 0;
+                led[14] <= 0;
+            end
+        end
+    end
+
     always @(posedge clk25m) begin
         if (border_red)
             oled_data <= {{5{1'b1}}, {11{1'b0}}};
         else if (border_orange)
             oled_data <= {{5{1'b1}}, 6'b101001, {5{1'b0}}};
-        else if (border_green_1)
+        else if (border_green_1 && state >= 1)
             oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
-        else if (border_green_2)
+        else if (border_green_2 && state >= 2)
             oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
-        else if (border_green_3)
+        else if (border_green_3 && state >= 3)
             oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
-        else if (border_green_4)
+        else if (border_green_4 && state == 4)
             oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
         else
             oled_data <= 16'b0;
