@@ -30,7 +30,7 @@ module menu(
     input btnR,
     input btnC,
     input btnD,
-    output reg [3:0] state = MENU_OLED_A,   // State used for LED
+    output reg [3:0] state = MENU_OLED_A,   // State used for 7-segment display
     output reg [3:0] task_state = MENU_INACTIVE // State used for activating tasks
     );
         
@@ -57,7 +57,7 @@ module menu(
         end
         
         // Confirm task selection
-        if (btnC) begin
+        if (task_state == MENU_INACTIVE && btnC) begin
             state <= MENU_INACTIVE;
             task_state <= state;
         end
