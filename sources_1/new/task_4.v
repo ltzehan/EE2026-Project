@@ -56,11 +56,8 @@ module task_4(
     reg [31:0] reset_ctr = 0;
     
     // Button press
-    reg prev_btnU = 0;
     always @(posedge CLK) begin
-       prev_btnU <= btnU;
-       // Rising edge of btnU
-       if (~prev_btnU & btnU) begin
+       if (btnU) begin
            if (!needs_reset) begin
                state <= (state == 4) ? 0 : state+1;
                needs_reset <= 1;

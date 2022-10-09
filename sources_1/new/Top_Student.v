@@ -31,12 +31,19 @@ module Top_Student (
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
     
-    wire d_btnU, d_btnL, d_btnR, d_btnD, d_btnC;
+    wire d_btnU, d_btnL, d_btnR, d_btnD, d_btnC; // debounced
     debouncer(CLK, btnU, d_btnU);
     debouncer(CLK, btnL, d_btnL);
     debouncer(CLK, btnR, d_btnR);
     debouncer(CLK, btnD, d_btnD);
     debouncer(CLK, btnC, d_btnC);
+    
+    wire e_btnU, e_btnL, e_btnR, e_btnD, e_btnC; // rising edge
+    edge_detector(CLK, d_btnU, e_btnU);
+    edge_detector(CLK, d_btnL, e_btnL);
+    edge_detector(CLK, d_btnR, e_btnR);
+    edge_detector(CLK, d_btnD, e_btnD);
+    edge_detector(CLK, d_btnC, e_btnC);
     
     wire [11:0] mic_out;
     Audio_Capture audio_capture(
@@ -67,14 +74,21 @@ module Top_Student (
     // 1: OLED Task A (4.2A)
     // 2: OLED Task B (4.2B)
     // 3: AVI Task (4.2C)
-    reg [3:0] menu_state = 0;
+    wire [3:0] menu_led_state;
+    wire [3:0] task_state;
     menu(
         .CLK(CLK),
-        .state(menu_state),
         .btnL(d_btnL),
         .btnR(d_btnR),
-        .btnC(d_btnC)
+        .btnC(d_btnC),
+        .btnD(d_btnD),
+        .state(menu_led_state),
+        .task_state(task_state)
         );
+
+    // TODO: Debugging
+    assign an = 4'b0000;
+    assign seg = (task_state != MENU_INACTIVE) ? {7{1'b1}} : menu_led_state;
 
     wire task_4a_led;
     wire [4:0] task_4c_led;

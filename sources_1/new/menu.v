@@ -26,24 +26,40 @@ parameter MENU_AVI = 3;
 
 module menu(
     input CLK,
-    input [3:0] state,
     input btnL,
     input btnR,
-    input btnC
+    input btnC,
+    input btnD,
+    output reg [3:0] state = MENU_OLED_A,   // State used for LED
+    output reg [3:0] task_state = MENU_INACTIVE // State used for activating tasks
     );
-    
+        
     always @(posedge CLK) begin
         if (state == MENU_INACTIVE) begin
-            
+            if (btnD) begin
+                state <= MENU_OLED_A;
+                task_state <= MENU_INACTIVE; 
+            end
         end
         else if (state == MENU_OLED_A) begin
-        
+            if (btnR)
+                state <= state + 1;
         end
         else if (state == MENU_OLED_B) begin
-        
+            if (btnL)
+                state <= state - 1;
+            else if (btnR)
+                state <= state + 1;
         end
         else if (state == MENU_AVI) begin
+            if (btnL)
+                state <= state - 1;
+        end
         
+        // Confirm task selection
+        if (btnC) begin
+            state <= MENU_INACTIVE;
+            task_state <= state;
         end
     end
     
