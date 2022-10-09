@@ -32,14 +32,14 @@ module Top_Student (
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
     
-    wire [11:0] mic_in;
+    wire [11:0] mic_out;
     Audio_Capture audio_capture(
         .CLK(CLK),
         .cs(clk20k),
         .MISO(J_MIC3_Pin3),
         .clk_samp(J_MIC3_Pin1),
         .sclk(J_MIC3_Pin4),
-        .sample(mic_in)
+        .sample(mic_out)
         );
     
     wire [15:0] oled_data;
@@ -58,16 +58,20 @@ module Top_Student (
         );
 
     wire task_4a_led;
+    wire [4:0] task_4c_led;
     wire [15:0] task_oled_data;
 
     assign led[14] = task_4a_led;
+    assign led[4:0] = task_4c_led;
     assign oled_data = task_oled_data;
     
     task_4(
         .CLK(CLK),
         .btnU(btnU),
         .pixel_index(pixel_index),
+        .mic_out(mic_out),
         .task_4a_led(task_4a_led),
+        .task_4c_led(task_4c_led),
         .oled_data(task_oled_data)
         );
 

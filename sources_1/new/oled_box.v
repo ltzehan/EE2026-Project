@@ -25,7 +25,7 @@ parameter OLED_H = 64;
 module xy_to_px(
     input [7:0] x,
     input [7:0] y,
-    output [15:0] px
+    output [12:0] px
     );
     
     assign px = (y * OLED_W) + x;
@@ -33,7 +33,7 @@ module xy_to_px(
 endmodule
 
 module px_to_xy(
-    input [15:0] px,
+    input [12:0] px,
     output [7:0] x,
     output [7:0] y
     );
