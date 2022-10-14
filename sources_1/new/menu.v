@@ -29,14 +29,13 @@ module menu(
     input btnL,
     input btnR,
     input btnC,
-    input btnD,
     output reg [3:0] state = MENU_OLED_A,   // State used for 7-segment display
     output reg [3:0] task_state = MENU_INACTIVE // State used for activating tasks
     );
         
     always @(posedge CLK) begin
         if (state == MENU_INACTIVE) begin
-            if (btnD) begin
+            if (btnC) begin
                 state <= MENU_OLED_A;
                 task_state <= MENU_INACTIVE; 
             end

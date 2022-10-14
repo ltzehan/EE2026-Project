@@ -89,7 +89,6 @@ module Top_Student (
         .btnL(d_btnL),
         .btnR(d_btnR),
         .btnC(d_btnC),
-        .btnD(d_btnD),
         .state(menu_sel_state),
         .task_state(task_state)
         );
