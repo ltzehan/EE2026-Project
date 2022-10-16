@@ -43,15 +43,19 @@
 *   Second stage (FIR):
 *       y[n] = s[n] - exp(-j*w_0)*s[n-1]   
 *   
-*   Since only power is required, ignore the second stage to compute phase
-*   Equivalently (I think), on the N-th calculation:
-*       F_k = s[N-1]^2 + s[N-2]^2 - w_k*s[N-1]*s[N-2]
+*   Ref.: https://circuitcellar.com/resources/ee-tips/basic-goertzel-ee-tip-120/ 
+*   Original Goertzel transform:
+*       Re = y1 - y2 * 2cos(w_k)
+*       Im = y2 * 2sin(w_k)
+*       
+*       F_k^2 = y1^2 + 4y^2 - 4*y1*y2*cos(w_k)
 */
 
 module goertzel #(
     parameter B=61, // Fixed-point representation length
     parameter N=40, // Number of samples
-    parameter k=0   // Freq. bin (k = [0, N-1])
+    parameter k=0,  // Freq. bin (k = [0, N-1])
+    parameter samp_khz=4_000
     ) (
     input CLK,
     input RST,
@@ -64,25 +68,28 @@ module goertzel #(
     localparam B_PART = (B-1) >> 1;
     // Constants
     localparam PI = 3.1415926535;
-    localparam w_k = 2*PI*k/N;
-    
-    wire EN; // TODO 
-    
-    reg signed [B-1:0] x;
-    reg signed [B-1:0] s;
+//    localparam w_k = 2*PI*k/N;
+    localparam w_k = 61'b0000000000000000000000000000001111111111111111101011010011010;
+   
+    wire EN;
+    fclk #(.khz(samp_khz)) clk (CLK, EN);
+        
+    reg signed [B-1:0] x = 0;
+    reg signed [B-1:0] s = 0;
     wire signed [B-1:0] s_prev1;
     wire signed [B-1:0] s_prev1_mul;
     wire signed [B-1:0] s_prev2;
-    wire signed [B-1:0] s_prev2_inv;
     
     // Convert mic -> x (fixed-point repr.)
     always @(posedge CLK or posedge RST) begin
+        $display("rst = %d, en = %d", RST, EN);
         if (RST)
             x <= 0;
         else if (EN)
             // Sign bit is always 0 (mic. input is unsigned)
             // Normalize input (x / 2^12) and clear integer part + pad lower bits of decimal part 
-            x <= {1'b0, {B_PART{1'b0}}, x, {(B_PART-12){1'b0}}};
+//            x <= {1'b0, {B_PART{1'b0}}, mic[11:0], {(B_PART-12){1'b0}}};
+            x <= {31'b0, mic[11:0], 19'b0};
     end
     
     // s[n] = x[n] + w_k * s[n-1] - s[n-2]
@@ -94,41 +101,23 @@ module goertzel #(
     end
     
     // s[n-1] * w_k
-    goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, EN, s_prev1, w_k, s_prev1_mul);
+    goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, EN, 
+                                     s_prev1, 
+                                     w_k, 
+                                     s_prev1_mul);
     
     // Store s[n-1]
-    goertzel_reg #(.B(B)) reg_prev1 (CLK, RST, EN, s, s_prev1);
+    goertzel_reg #(.B(B)) reg_prev1 (CLK, RST, EN, 
+                                     s, 
+                                     s_prev1);
     
     // Store s[n-2]
-    goertzel_reg #(.B(B)) reg_prev2 (CLK, RST, EN, s_prev1, s_prev2);
+    goertzel_reg #(.B(B)) reg_prev2 (CLK, RST, EN, 
+                                     s_prev1, 
+                                     s_prev2);
     
     assign y1 = s_prev1;
     assign y2 = s_prev2;
-    
-endmodule
-
-// Converts integer to fixed-point representation
-// Using 1 sign bit + 30 integer bits + 30 decimal bits = 61 bits
-module goertzel_fp #(
-    parameter B=61
-    ) (
-    input CLK,
-    input RST,
-    input EN,
-    input [11:0] x,
-    output reg signed [B-1:0] fp
-    );
-    
-    localparam B_PART = (B-1) >> 1;
-    
-    always @(posedge CLK or posedge RST) begin
-        if (RST)
-            fp <= 0;
-        else if (EN)
-            // Sign bit is always 0 (mic. input is unsigned)
-            // Normalize input (x / 2^12) and clear integer part + pad lower bits of decimal part 
-            fp <= {1'b0, {B_PART{1'b0}}, x, {(B_PART-12){1'b0}}};
-    end
     
 endmodule
 
@@ -161,19 +150,23 @@ module goertzel_mul #(
     input EN,
     input signed [B-1:0] a,
     input signed [B-1:0] b,
-    output reg signed [B-1:0] y
+    output reg signed [B-1:0] y=0
     );
     
     // Product of two B-bits is 2B-bits in size
     wire signed [(2*B)-1:0] temp;
     assign temp = a * b;
     
+    // Lower 30 bits of integer and higher 30 bits of decimal
+    localparam B_DEC = (B-1)/2;
+    localparam B_INT = 3*(B-1)/2 - 1;
     always @(posedge CLK or posedge RST) begin
         if (RST)
             y <= 0;
         else if (EN)
-            // Take sign bit and lower 30 bits of integer and higher 30 bits of decimal
-            y <= {temp[(2*B-1)], temp[89:30]};
+            // Take sign bit and truncate
+//            y <= {temp[(2*B-1)], temp[B_INT:B_DEC]};
+            y <= temp[90:30];
     end
     
 endmodule
