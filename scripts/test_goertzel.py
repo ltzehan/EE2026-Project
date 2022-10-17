@@ -10,6 +10,18 @@ def fp(x):
     return Fxp(x, signed=True, n_word=B_WORD, n_frac=B_FRAC).bin()
 
 
+def test_goertzel_fp():
+    for test_case in range(1, 10):
+        x = int(2**12 * random())
+
+        # Format as Verilog
+        print(f"x = {x};")
+        print("#10;")
+        print(f"`assert(y, {B_WORD}'b{fp(x /2**12)});")
+        print("#10;")
+
+
+# TODO: Signed
 def test_goertzel_mul():
     for test_case in range(1, 5):
         a = 2**12 * random()
@@ -29,4 +41,5 @@ def test_goertzel_mul():
 
 
 if __name__ == "__main__":
-    test_goertzel_mul()
+    # test_goertzel_mul()
+    test_goertzel_fp()

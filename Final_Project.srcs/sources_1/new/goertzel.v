@@ -80,18 +80,6 @@ module goertzel #(
     wire signed [B-1:0] s_prev1_mul;
     wire signed [B-1:0] s_prev2;
     
-    // Convert mic -> x (fixed-point repr.)
-    always @(posedge CLK or posedge RST) begin
-        $display("rst = %d, en = %d", RST, EN);
-        if (RST)
-            x <= 0;
-        else if (EN)
-            // Sign bit is always 0 (mic. input is unsigned)
-            // Normalize input (x / 2^12) and clear integer part + pad lower bits of decimal part 
-//            x <= {1'b0, {B_PART{1'b0}}, mic[11:0], {(B_PART-12){1'b0}}};
-            x <= {31'b0, mic[11:0], 19'b0};
-    end
-    
     // s[n] = x[n] + w_k * s[n-1] - s[n-2]
     always @(posedge CLK or posedge RST) begin
         if (RST)
@@ -99,6 +87,11 @@ module goertzel #(
         else if (EN)
             s <= x + s_prev1_mul - s_prev2;
     end
+    
+    // Convert mic -> x (fixed-point repr.)
+    goertzel_fp #(.B(B)) fp (CLK, RST, EN,
+                             mic,
+                             x);
     
     // s[n-1] * w_k
     goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, EN, 
