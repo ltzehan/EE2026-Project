@@ -23,9 +23,9 @@ def test_goertzel_fp():
 
 # TODO: Signed
 def test_goertzel_mul():
-    for test_case in range(1, 5):
-        a = 2**12 * random()
-        b = 2**12 * random()
+    for test_case in range(1, 10):
+        a = 2**12 * (random() - 0.5) * 2
+        b = 2**12 * (random() - 0.5) * 2
         y = a * b
 
         # Format as Verilog
@@ -37,9 +37,10 @@ def test_goertzel_mul():
         print("#10;")
         print(f'$display("Expected = {fp(y)}");')
         print(f'$display("Actual   = %b", y);')
+        print(f'$display("Diff.    = %d", $signed({B_WORD}\'b{fp(y)} - y));')
         print("#10;\n")
 
 
 if __name__ == "__main__":
-    # test_goertzel_mul()
-    test_goertzel_fp()
+    test_goertzel_mul()
+    # test_goertzel_fp()
