@@ -31,7 +31,7 @@ module sim_goertzel_mul(
     reg signed [60:0] a;
     reg signed [60:0] b;
     wire signed [60:0] y;
-    goertzel_mul goertzel_mul(CLK, 1'b0, 1'b1, a, b, y); 
+    goertzel_mul goertzel_mul(CLK, 1'b0, a, b, y); 
     
     initial begin
         // a = 251.76798041892653

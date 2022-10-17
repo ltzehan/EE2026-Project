@@ -26,7 +26,6 @@ module goertzel_mul #(
     ) (
     input CLK,
     input RST,
-    input EN,
     input signed [B-1:0] a,
     input signed [B-1:0] b,
     output reg signed [B-1:0] y=0
@@ -42,7 +41,7 @@ module goertzel_mul #(
     always @(posedge CLK or posedge RST) begin
         if (RST)
             y <= 0;
-        else if (EN)
+        else
             // Take sign bit and truncate
 //            y <= {temp[(2*B-1)], temp[B_INT:B_DEC]};
             y <= temp[90:30];

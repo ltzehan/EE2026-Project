@@ -22,23 +22,27 @@
 
 module sim_goertzel(
     );
-        
+    
+    sim_goertzel_fp sim_fp();
+    sim_goertzel_mul sim_mul();
+    sim_goertzel_reg sim_reg();
+    
     // 100MHz clock
-    reg CLK = 0;
-    always begin
-        #5 CLK <= ~CLK;
-    end
+//    reg CLK = 0;
+//    always begin
+//        #5 CLK <= ~CLK;
+//    end
     
-    // Sine wave generator
-    wire [11:0] sine_4khz;
-    sine_gen #(.SIZE(25000)) sine_4khz_gen(CLK, sine_4khz); 
+//    // Sine wave generator
+//    wire [11:0] sine_4khz;
+//    sine_gen #(.SIZE(25000)) sine_4khz_gen(CLK, sine_4khz); 
     
-    reg RST = 0;
-    wire [11:0] mic = 0;
-    wire [60:0] y1;
-    wire [60:0] y2;
+//    reg RST = 0;
+//    wire [11:0] mic = 0;
+//    wire [60:0] y1;
+//    wire [60:0] y2;
     
-    assign mic = sine_4khz;
-    goertzel goertzel(CLK, RST, sine_4khz, y1, y2); 
+//    assign mic = sine_4khz;
+//    goertzel goertzel(CLK, RST, sine_4khz, y1, y2); 
     
 endmodule

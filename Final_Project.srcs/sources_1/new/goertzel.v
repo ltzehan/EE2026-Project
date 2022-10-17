@@ -84,17 +84,17 @@ module goertzel #(
     always @(posedge CLK or posedge RST) begin
         if (RST)
             s <= 0;
-        else if (EN)
+        else
             s <= x + s_prev1_mul - s_prev2;
     end
     
     // Convert mic -> x (fixed-point repr.)
-    goertzel_fp #(.B(B)) fp (CLK, RST, EN,
+    goertzel_fp #(.B(B)) fp (CLK, RST,
                              mic,
                              x);
     
     // s[n-1] * w_k
-    goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, EN, 
+    goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, 
                                      s_prev1, 
                                      w_k, 
                                      s_prev1_mul);

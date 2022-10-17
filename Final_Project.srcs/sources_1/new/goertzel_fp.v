@@ -25,7 +25,6 @@ module goertzel_fp #(
     ) (
     input CLK,
     input RST,
-    input EN,
     input [11:0] mic,
     output reg signed [B-1:0] x=0
     );
@@ -33,7 +32,7 @@ module goertzel_fp #(
     always @(posedge CLK or posedge RST) begin
         if (RST)
             x <= 0;
-        else if (EN)
+        else
             // Sign bit is always 0 (mic. input is unsigned)
             // Normalize input (x / 2^12) and clear integer part + pad lower bits of decimal part 
 //            x <= {1'b0, {B_PART{1'b0}}, mic[11:0], {(B_PART-12){1'b0}}};
