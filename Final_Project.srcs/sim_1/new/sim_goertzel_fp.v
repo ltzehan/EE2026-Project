@@ -38,7 +38,7 @@ module sim_goertzel_fp(
     
     reg [11:0] x;
     wire signed [60:0] y;
-    goertzel_fp goertzel_fp(CLK, 1'b0, x, y); 
+    goertzel_fp goertzel_fp(CLK, 1'b0, 1'b1, x, y); 
     
     initial begin
         x = 1567;

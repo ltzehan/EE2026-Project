@@ -48,17 +48,18 @@
 *       Re = y1 - y2 * 2cos(w_k)
 *       Im = y2 * 2sin(w_k)
 *       
-*       F_k^2 = y1^2 + 4y^2 - 4*y1*y2*cos(w_k)
+*       P(k) = y1^2 + 4y^2 - 4*y1*y2*cos(w_k)
 */
 
 module goertzel #(
     parameter B=61, // Fixed-point representation length
     parameter N=40, // Number of samples
     parameter k=0,  // Freq. bin (k = [0, N-1])
-    parameter samp_khz=4_000
+    parameter samp_khz=20_000
     ) (
     input CLK,
     input RST,
+    input mic_cs,      // Mic. input on posedge 
     input [11:0] mic,  // Mic. input
     output [B-1:0] y1,
     output [B-1:0] y2
@@ -66,46 +67,58 @@ module goertzel #(
     
     // Length of integer/decimal part    
     localparam B_PART = (B-1) >> 1;
-    // Constants
-    localparam PI = 3.1415926535;
-//    localparam w_k = 2*PI*k/N;
-    localparam w_k = 61'b0000000000000000000000000000001111111111111111101011010011010;
    
-    wire EN;
-    fclk #(.khz(samp_khz)) clk (CLK, EN);
-        
-    reg signed [B-1:0] x = 0;
+    // Load values of cos(w_k)
+    reg [B-1:0] cos_w_k_arr [N-1:0];
+    reg [B-1:0] cos_w_k;
+    initial begin
+        $readmemh("cos_w_k.mem", cos_w_k_arr);
+        cos_w_k = cos_w_k_arr[k];
+    end
+       
+    wire signed [B-1:0] x;
     reg signed [B-1:0] s = 0;
     wire signed [B-1:0] s_prev1;
     wire signed [B-1:0] s_prev1_mul;
     wire signed [B-1:0] s_prev2;
     
-    // s[n] = x[n] + w_k * s[n-1] - s[n-2]
-    always @(posedge CLK or posedge RST) begin
-        if (RST)
-            s <= 0;
-        else
-            s <= x + s_prev1_mul - s_prev2;
-    end
+    wire x_ready;
+    reg s_ready = 0;
+    wire mul_ready;
     
     // Convert mic -> x (fixed-point repr.)
-    goertzel_fp #(.B(B)) fp (CLK, RST,
+    goertzel_fp #(.B(B)) fp (CLK, RST, mic_cs,
                              mic,
-                             x);
+                             x,
+                             x_ready);
     
-    // s[n-1] * w_k
-    goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, 
+    // s[n] = x[n] + w_k * s[n-1] - s[n-2]
+    always @(posedge CLK or posedge RST) begin
+        s_ready <= 0;
+        if (RST) begin
+            s <= 0;
+        end 
+        else if (x_ready) begin
+             s <= x + s_prev1_mul - s_prev2;
+             s_ready <= 1;
+        end
+    end
+    
+    // s[n-1] * cos(w_k)
+    goertzel_mul #(.B(B)) mul_prev1 (CLK, RST, x_ready,
                                      s_prev1, 
-                                     w_k, 
-                                     s_prev1_mul);
+                                     cos_w_k, 
+                                     s_prev1_mul,
+                                     mul_ready);
     
+    // Store previous states right before s is computed
     // Store s[n-1]
-    goertzel_reg #(.B(B)) reg_prev1 (CLK, RST, EN, 
+    goertzel_reg #(.B(B)) reg_prev1 (CLK, RST, x_ready, 
                                      s, 
                                      s_prev1);
     
     // Store s[n-2]
-    goertzel_reg #(.B(B)) reg_prev2 (CLK, RST, EN, 
+    goertzel_reg #(.B(B)) reg_prev2 (CLK, RST, x_ready, 
                                      s_prev1, 
                                      s_prev2);
     

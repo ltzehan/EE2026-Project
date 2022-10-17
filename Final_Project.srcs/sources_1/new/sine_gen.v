@@ -25,12 +25,11 @@ module sine_gen(
     output reg [11:0] out=0
     );
     
-    // SIZE = 100 MHz / Req. Freq.
     parameter SIZE = 1024;
     
     reg [11:0] sine_mem [SIZE-1:0];
     initial
-        $readmemh("sine_4khz.mem", sine_mem);
+        $readmemh("sine_770hz.mem", sine_mem);
         
     reg [31:0] i = 0;
     always @(posedge CLK) begin

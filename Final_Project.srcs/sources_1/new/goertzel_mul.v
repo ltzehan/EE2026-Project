@@ -26,9 +26,11 @@ module goertzel_mul #(
     ) (
     input CLK,
     input RST,
+    input EN,
     input signed [B-1:0] a,
     input signed [B-1:0] b,
-    output reg signed [B-1:0] y=0
+    output reg signed [B-1:0] y=0,
+    output reg y_ready=0
     );
     
     // Product of two B-bits is 2B-bits in size
@@ -39,12 +41,16 @@ module goertzel_mul #(
     localparam B_DEC = (B-1)/2;
     localparam B_INT = 3*(B-1)/2 - 1;
     always @(posedge CLK or posedge RST) begin
-        if (RST)
+        y_ready <= 0;
+        if (RST) begin
             y <= 0;
-        else
+        end
+        else if (EN) begin
             // Take sign bit and truncate
 //            y <= {temp[(2*B-1)], temp[B_INT:B_DEC]};
             y <= temp[90:30];
+            y_ready <= 1;
+        end
     end
     
 endmodule

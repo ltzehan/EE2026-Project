@@ -11,55 +11,69 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="297810000000fs"></ZoomStartTime>
-      <ZoomEndTime time="300440000001fs"></ZoomEndTime>
-      <Cursor1Time time="300000000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="261400000001fs"></ZoomEndTime>
+      <Cursor1Time time="177500000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="169"></NameColumnWidth>
-      <ValueColumnWidth column_width="94"></ValueColumnWidth>
+      <ValueColumnWidth column_width="70"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="10" />
+   <WVObjectSize size="13" />
    <wvobject fp_name="/sim_goertzel/CLK" type="logic">
       <obj_property name="ElementShortName">CLK</obj_property>
       <obj_property name="ObjectShortName">CLK</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/sine_4khz" type="array">
-      <obj_property name="ElementShortName">sine_4khz[11:0]</obj_property>
-      <obj_property name="ObjectShortName">sine_4khz[11:0]</obj_property>
+   <wvobject fp_name="/sim_goertzel/sine" type="array">
+      <obj_property name="ElementShortName">sine[11:0]</obj_property>
+      <obj_property name="ObjectShortName">sine[11:0]</obj_property>
       <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
       <obj_property name="CellHeight">100</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/goertzel/EN" type="logic">
-      <obj_property name="ElementShortName">EN</obj_property>
-      <obj_property name="ObjectShortName">EN</obj_property>
+   <wvobject fp_name="/sim_goertzel/mic" type="array">
+      <obj_property name="ElementShortName">mic[11:0]</obj_property>
+      <obj_property name="ObjectShortName">mic[11:0]</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/goertzel/x" type="array">
+   <wvobject fp_name="/sim_goertzel/clk_20k" type="logic">
+      <obj_property name="ElementShortName">clk_20k</obj_property>
+      <obj_property name="ObjectShortName">clk_20k</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_goertzel/mic_ready" type="logic">
+      <obj_property name="ElementShortName">mic_ready</obj_property>
+      <obj_property name="ObjectShortName">mic_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_goertzel/goertzel_0/x_ready" type="logic">
+      <obj_property name="ElementShortName">x_ready</obj_property>
+      <obj_property name="ObjectShortName">x_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_goertzel/goertzel_0/s_ready" type="logic">
+      <obj_property name="ElementShortName">s_ready</obj_property>
+      <obj_property name="ObjectShortName">s_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_goertzel/goertzel_0/mul_ready" type="logic">
+      <obj_property name="ElementShortName">mul_ready</obj_property>
+      <obj_property name="ObjectShortName">mul_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_goertzel/goertzel_0/x" type="array">
       <obj_property name="ElementShortName">x[60:0]</obj_property>
       <obj_property name="ObjectShortName">x[60:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/goertzel/s" type="array">
+   <wvobject fp_name="/sim_goertzel/goertzel_0/s" type="array">
       <obj_property name="ElementShortName">s[60:0]</obj_property>
       <obj_property name="ObjectShortName">s[60:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/goertzel/s_prev1" type="array">
-      <obj_property name="ElementShortName">s_prev1[60:0]</obj_property>
-      <obj_property name="ObjectShortName">s_prev1[60:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/goertzel/s_prev1_mul" type="array">
+   <wvobject fp_name="/sim_goertzel/goertzel_0/s_prev1_mul" type="array">
       <obj_property name="ElementShortName">s_prev1_mul[60:0]</obj_property>
       <obj_property name="ObjectShortName">s_prev1_mul[60:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/goertzel/s_prev2" type="array">
+   <wvobject fp_name="/sim_goertzel/goertzel_0/s_prev1" type="array">
+      <obj_property name="ElementShortName">s_prev1[60:0]</obj_property>
+      <obj_property name="ObjectShortName">s_prev1[60:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_goertzel/goertzel_0/s_prev2" type="array">
       <obj_property name="ElementShortName">s_prev2[60:0]</obj_property>
       <obj_property name="ObjectShortName">s_prev2[60:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/y1" type="array">
-      <obj_property name="ElementShortName">y1[60:0]</obj_property>
-      <obj_property name="ObjectShortName">y1[60:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/y2" type="array">
-      <obj_property name="ElementShortName">y2[60:0]</obj_property>
-      <obj_property name="ObjectShortName">y2[60:0]</obj_property>
    </wvobject>
 </wave_config>
