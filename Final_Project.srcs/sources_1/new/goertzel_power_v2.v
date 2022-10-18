@@ -34,8 +34,8 @@ module goertzel_power_v2(
     parameter k = 0;
     
     // Load values of 2*cos(w_k)
-    reg [31:0] val_arr [N-1:0];
-    reg [31:0] val;
+    reg signed [31:0] val_arr [N-1:0];
+    reg signed [31:0] val;
     initial begin
         $readmemh("val.mem", val_arr);
         val = val_arr[k];
@@ -55,6 +55,6 @@ module goertzel_power_v2(
     assign y1_y2_val_64 = y1_y2 * val;
     assign out_64 = y1_sqr_64 + y2_sqr_64 - y1_y2_val_64;
 
-    assign out = out_64[46:15];
+    assign out = out_64 > 0 ? out_64[46:15] : 0;
     
 endmodule

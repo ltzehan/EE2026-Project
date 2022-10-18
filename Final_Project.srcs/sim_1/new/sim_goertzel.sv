@@ -38,11 +38,14 @@ module sim_goertzel(
     wire mic_clk;
     fclk #(.khz(20)) fclk (CLK, mic_clk);
     input_gen #(.SIZE(171)) input_gen (mic_clk, mic); 
-    
+
     parameter [7:0][7:0] BINS = {8'd5, 8'd6, 8'd7, 8'd8, 8'd10, 8'd11, 8'd12, 8'd13};
     wire [31:0] y1 [7:0];
     wire [31:0] y2 [7:0];
     wire [31:0] power [7:0];
+
+//    goertzel_v2 #(.k(1)) goertzel_v2 (CLK, 1'b0, mic, y1[0], y2[0]);
+//    goertzel_power_v2 #(.k(1)) goertzel_power_v2 (CLK, 1'b0, y1[0], y2[0], power[0]);
     
     genvar k;
     generate 

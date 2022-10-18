@@ -10,14 +10,14 @@ B_INT = 17
 B_FRAC = 15
 # n_bits = bits to right of binary point
 # n_intbits = bits to left (incl. sign)
-q30_30 = FXfamily(n_bits=B_FRAC, n_intbits=B_INT)
+q17_15 = FXfamily(n_bits=B_FRAC, n_intbits=B_INT)
 
-DEBUG_INTMD = False
+DEBUG_INTMD = True
 
 
 def fp(x):
     # return x
-    return FXnum(x, q30_30)
+    return FXnum(x, q17_15)
     # return Fxp(x, signed=True, n_word=B_WORD, n_frac=B_FRAC)
 
 
@@ -33,6 +33,8 @@ def goertzel(samples, sample_rate):
     freqs = []
     result = []
     for (k, freq) in enumerate(bins):
+        # if k != 1:
+        #     continue
         if freq >= 3000:
             break
 
@@ -40,11 +42,10 @@ def goertzel(samples, sample_rate):
         cos_w_k = 2 * math.cos(w_k)
         val = fp(cos_w_k)
 
-        if DEBUG_INTMD:
-            print("=" * 50)
-            print("k        =", k)
-            print("freq     =", freq)
-            print("val      =", val)
+        # print(">" * 50)
+        # print("k        =", k)
+        # print("freq     =", freq)
+        # print("val      =", ashex(val), "\t", val)
 
         s1, s2 = fp(0), fp(0)
         OFFSET = 12
@@ -57,18 +58,18 @@ def goertzel(samples, sample_rate):
             s = x + s1_mul + s2_inv
             # s = x + (val * s1) - s2
             s1, s2 = s, s1
-            if DEBUG_INTMD:
-                print("=" * 50)
-                print("val      =", ashex(val), "\t", val)
-                print("mic      =", ashex(val))
-                print("-" * 50)
-                print("x        =", ashex(x), "\t", x)
-                print("s1_mul   =", ashex(s1_mul), "\t", s1_mul)
-                print("s2_inv   =", ashex(s2_inv), "\t", s2_inv)
-                print("-" * 50)
-                print("s        =", ashex(s), "\t", s)
-                print("s1       =", ashex(s1), "\t", s1)
-                print("s2       =", ashex(s2), "\t", s2)
+
+            # print("=" * 50)
+            # print("val      =", ashex(val), "\t", val)
+            # print("mic      =", hex(int(mic)), "\t", mic)
+            # print("-" * 50)
+            # print("x        =", ashex(x), "\t", x)
+            # print("s1_mul   =", ashex(s1_mul), "\t", s1_mul)
+            # print("s2_inv   =", ashex(s2_inv), "\t", s2_inv)
+            # print("-" * 50)
+            # print("s        =", ashex(s), "\t", s)
+            # print("s1       =", ashex(s1), "\t", s1)
+            # print("s2       =", ashex(s2), "\t", s2)
 
         y1, y2 = float(s1), float(s2)
         y1_sqr = y1 * y1
@@ -81,13 +82,14 @@ def goertzel(samples, sample_rate):
         print("=" * 50)
         print("k        =", k)
         print("freq     =", freq)
-        print("y1       =", y1)
-        print("y2       =", y2)
-        print("y1_sqr   =", y1_sqr)
-        print("y2_sqr   =", y2_sqr)
-        print("y1_y2    =", y1_y2)
-        print("y1_y2_val=", y1_y2_val)
-        print("power    =", power)
+        print("s        =", ashex(s), "\t", s)
+        print("y1       =", ashex(y1), "\t", y1)
+        print("y2       =", ashex(y2), "\t", y2)
+        # print("y1_sqr   =", y1_sqr)
+        # print("y2_sqr   =", y2_sqr)
+        # print("y1_y2    =", y1_y2)
+        # print("y1_y2_val=", y1_y2_val)
+        # print("power    =", power)
 
         freqs.append(freq)
         result.append(power)
@@ -109,7 +111,9 @@ if __name__ == "__main__":
     # dtmf_sample = [np.sin(2 * np.pi * freq * t) for freq in dtmf]
     dtmf_sample = [
         # np.sin(2 * np.pi * freq * t)
-        int(OUT_AMP / 2) * np.sin(2 * np.pi * freq * t) + int(OUT_AMP / 2)
+        int(OUT_AMP / 4) * np.sin(2 * np.pi * freq * t)
+        + int(OUT_AMP / 2)
+        + int(OUT_AMP / 5) * np.sin(2 * np.pi * 697 * t)
         for freq in dtmf
     ]
 
@@ -123,11 +127,13 @@ if __name__ == "__main__":
         pylab.subplot(2, len(dtmf), i + 1)
         pylab.title(f"{dtmf[i]} Hz")
         pylab.plot(t, dtmf_sample[i])
+        pylab.ylim([0, 4096])
 
         freqs, result = goertzel(dtmf_sample[i], SAMPLE_FREQ)
 
         pylab.subplot(2, len(dtmf), len(dtmf) + i + 1)
         pylab.plot(freqs, result, "o")
         pylab.xlim([600, 1800])
+        pylab.ylim([0, 4096])
 
     pylab.show()

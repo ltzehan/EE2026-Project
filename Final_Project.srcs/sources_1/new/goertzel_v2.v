@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module goertzel_v2(
+module goertzel_v2 (
     input CLK,
     input RST,
     input [11:0] mic,  // Mic. input
@@ -33,8 +33,8 @@ module goertzel_v2(
     parameter k = 0;
 
     // Load values of 2*cos(w_k)
-    reg [31:0] val_arr [N-1:0];
-    reg [31:0] val;
+    reg signed [31:0] val_arr [N-1:0];
+    reg signed [31:0] val;
     initial begin
         $readmemh("val.mem", val_arr);
         val = val_arr[k];
