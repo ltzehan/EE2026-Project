@@ -122,9 +122,9 @@ if __name__ == "__main__":
     # dtmf_sample = [np.sin(2 * np.pi * freq * t) for freq in dtmf]
     dtmf_sample = [
         # np.sin(2 * np.pi * freq * t)
-        int(OUT_AMP / 4) * np.sin(2 * np.pi * freq * t)
+        int(OUT_AMP / 8) * np.sin(2 * np.pi * freq * t)
         + int(OUT_AMP / 2)
-        + int(OUT_AMP / 4) * np.sin(2 * np.pi * 1209 * t)
+        + int(OUT_AMP / 8) * np.sin(2 * np.pi * 1209 * t)
         for freq in dtmf
     ]
 
@@ -145,6 +145,6 @@ if __name__ == "__main__":
         pylab.subplot(2, len(dtmf), len(dtmf) + i + 1)
         pylab.plot(freqs, result, "o")
         pylab.xlim([600, 1800])
-        pylab.ylim([0, 4096])
+        # pylab.ylim([0, 4096])
 
     pylab.show()
