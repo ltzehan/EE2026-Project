@@ -23,6 +23,7 @@ parameter MENU_INACTIVE = 0;
 parameter MENU_OLED_A = 1;
 parameter MENU_OLED_B = 2;
 parameter MENU_AVI = 3;
+parameter MENU_DTMF = 4;
 
 module menu(
     input CLK,
@@ -51,6 +52,12 @@ module menu(
                 state <= state + 1;
         end
         else if (state == MENU_AVI) begin
+            if (btnL)
+                state <= state - 1;
+            else if (btnR)
+                state <= state + 1;
+        end
+        else if (state == MENU_DTMF) begin
             if (btnL)
                 state <= state - 1;
         end

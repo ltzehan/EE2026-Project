@@ -75,6 +75,17 @@ module Top_Student (
         );
 
     /**
+     *  Goertzel Filter
+     */
+     
+    wire [7:0] dtmf_led;
+    goertzel_wrapper(
+        .mic_clk(clk20k),
+        .mic(mic_out),
+        .led(dtmf_led)
+        );
+
+    /**
      *  Logic
      */
 
@@ -82,6 +93,7 @@ module Top_Student (
     // 1: OLED Task A (4.2A)
     // 2: OLED Task B (4.2B)
     // 3: AVI Task (4.2C)
+    // 4: DTMF
     wire [3:0] menu_sel_state;
     wire [3:0] task_state;
     menu(
@@ -135,6 +147,13 @@ module Top_Student (
                 char2 <= SEG_4;
                 char3 <= SEG_C;
             end
+            MENU_DTMF: begin
+                char0 <= SEG_D;
+                char1 <= SEG_T;
+                char2 <= SEG_M;
+                char3 <= SEG_F;
+            end
+            
         endcase
     end
 
@@ -154,6 +173,9 @@ module Top_Student (
         end
         else if (task_state == MENU_AVI) begin
             led[4:0] <= task_4c_led;
+        end
+        else if (task_state == MENU_DTMF) begin
+            led[7:0] <= dtmf_led;
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;

@@ -23,6 +23,10 @@ parameter SEG_BLANK = 7'b1111111;
 parameter SEG_A = 7'b0001000;
 parameter SEG_B = 7'b0000011;
 parameter SEG_C = 7'b0100111;
+parameter SEG_D = 7'b0100001;
+parameter SEG_F = 7'b0001110;
+parameter SEG_M = 7'b0101010;
+parameter SEG_T = 7'b0000111;
 parameter SEG_4 = 7'b0011001;
 
 module segment_map(

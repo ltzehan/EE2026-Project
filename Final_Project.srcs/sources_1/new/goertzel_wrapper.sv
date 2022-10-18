@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 18.10.2022 14:46:32
+// Create Date: 18.10.2022 21:41:10
 // Design Name: 
-// Module Name: sim_goertzel
+// Module Name: goertzel_wrapper
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,24 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module sim_goertzel(
+module goertzel_wrapper(
+    input mic_clk,
+    input [11:0] mic,
+    output reg [7:0] led=0
     );
     
-    localparam SIZE = 283;
-
-    // 100MHz clock
-    reg CLK = 0;
-    always begin
-        #5 CLK <= ~CLK;
-    end
-    
-    // Input waveform
-    wire [11:0] mic;
-    wire mic_clk;
-    fclk #(.khz(20)) fclk (CLK, mic_clk);
-    input_gen #(.SIZE(SIZE)) input_gen (mic_clk, mic);
-
-    parameter [7:0][7:0] BINS = {8'd10, 8'd11, 8'd12, 8'd13, 8'd17, 8'd19, 8'd21, 8'd23};
+    parameter SIZE = 283;
+    localparam [7:0][7:0] BINS = {8'd10, 8'd11, 8'd12, 8'd13, 8'd17, 8'd19, 8'd21, 8'd23};
     wire [31:0] y1 [7:0];
     wire [31:0] y2 [7:0];
     wire [31:0] power [7:0];
@@ -84,6 +74,17 @@ module sim_goertzel(
                     col_valid = 1;
                 end           
             end
+            
+            if (row_valid & col_valid) begin
+                led[row_idx] <= 1;
+                led[col_idx+4] <= 1;
+            end
+        end
+        
+        // Reset after 1 clock cycle
+        if (ctr == 0) begin
+            row_valid <= 0;
+            col_valid <= 0;
         end
     end
     
