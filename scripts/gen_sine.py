@@ -11,7 +11,7 @@ import matplotlib.pylab as plt
 
 CLK_FREQ = 100_000_000
 SAMP_FREQ = 20_000
-OUT_FREQ = 770
+OUT_FREQ = 1633
 # Output will range from 0 to 2**OUT_BITS-1
 OUT_BITS = 12
 

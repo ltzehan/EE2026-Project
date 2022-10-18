@@ -17,7 +17,7 @@ def test_goertzel_fp():
         # Format as Verilog
         print(f"x = {x};")
         print("#10;")
-        print(f"`assert(y, {B_WORD}'b{fp(x /2**12)});")
+        print(f"`assert(y, {B_WORD}'b{fp(x / 2**11)});")
         print("#10;")
 
 
@@ -42,5 +42,5 @@ def test_goertzel_mul():
 
 
 if __name__ == "__main__":
-    test_goertzel_mul()
-    # test_goertzel_fp()
+    # test_goertzel_mul()
+    test_goertzel_fp()

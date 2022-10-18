@@ -1,14 +1,27 @@
-dtmf = {697, 770, 852, 941, 1209, 1336, 1477, 1633}
+dtmf = [697, 770, 852, 941, 1209, 1336, 1477, 1633]
 
-# Number of samples
-N = 40
 # Sampling frequency (Hz)
-f_samp = 4_000
+f_samp = 20_000
+
+
+def calc_bin(N):
+    dtmf_bin = [int(N * f / f_samp) for f in dtmf]
+
+    if len(set(dtmf_bin)) == len(dtmf):
+        print(f"Sample freq. = {f_samp}")
+        print(f"N = {N}")
+        for (f, bin) in zip(dtmf, dtmf_bin):
+            print(f"{f} Hz: \t{bin}")
+
+        return True
+
+    return False
+
 
 if __name__ == "__main__":
-    f_bin = f_samp // N
-    dtmf_bin = [f // f_bin for f in dtmf]
 
-    print(dtmf_bin)
-    if len(set(dtmf_bin)) != len(dtmf):
-        print("DTMF tones do not have distinct freq. bins")
+    n = 1
+    while True:
+        if calc_bin(n):
+            break
+        n += 1

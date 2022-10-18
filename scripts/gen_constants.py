@@ -1,11 +1,12 @@
 from fxpmath import Fxp
-from math import pi, cos
+import math
 
-B_DEC = 30
-B_FRAC = 30
+B_DEC = 16
+B_FRAC = 15
 B_WORD = 1 + B_DEC + B_FRAC
 
-N = 40
+SAMPLE_FREQ = 20_000
+N = 171
 
 # To fixed-point representation
 def fp(x):
@@ -14,6 +15,13 @@ def fp(x):
 
 if __name__ == "__main__":
 
-    w_k = [fp(cos(2 * pi * k / N)) for k in range(N)]
-    with open("cos_w_k.mem", "w") as ff:
-        ff.write("\n".join(w_k))
+    val = []
+    f_bin = SAMPLE_FREQ / N
+    for k in range(N):
+        w_k = 2 * math.pi * f_bin * k / SAMPLE_FREQ
+        cos_w_k = 2 * math.cos(w_k)
+
+        val.append(fp(cos_w_k))
+
+    with open("val.mem", "w") as ff:
+        ff.write("\n".join(val))

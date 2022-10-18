@@ -25,48 +25,60 @@
 //  2.   power
 module goertzel_power #(
     parameter B=61,
-    parameter N=40,
+    parameter N=171,
     parameter k=0
     ) (
     input CLK,
     input RST,
     input signed [B-1:0] y1,
     input signed [B-1:0] y2,
-    output reg signed [B-1:0] power=0
+    output signed [B-1:0] out
     );
     
-    // Load values of cos(w_k)
-    reg [B-1:0] cos_w_k_arr [N-1:0];
-    reg [B-1:0] cos_w_k;
+    // Load values of 2*cos(w_k)
+    reg [B-1:0] val_arr [N-1:0];
+    reg [B-1:0] val;
     initial begin
-        $readmemh("cos_w_k.mem", cos_w_k_arr);
-        cos_w_k = cos_w_k_arr[k];
+        $readmemh("val.mem", val_arr);
+        val = val_arr[k];
     end
     
     wire signed [60:0] y1_sqr;
     wire signed [60:0] y2_sqr;
     wire signed [60:0] y1_y2;
+    wire signed [60:0] cos;
+    wire signed [60:0] power;
     
     // y1^2
-    goertzel_mul #(.B(B)) mul_y1_sqr (CLK, RST, 
+    goertzel_mul #(.B(B)) mul_y1_sqr (CLK, RST, 1'b1,
                                       y1, 
                                       y1, 
                                       y1_sqr);
                                      
-    // 4*y2^2
-    goertzel_mul #(.B(B)) mul_y2_sqr (CLK, RST, 
-                                      4*y2, 
+    // y2^2
+    goertzel_mul #(.B(B)) mul_y2_sqr (CLK, RST, 1'b1,
+                                      y2, 
                                       y2, 
                                       y2_sqr);
     
-    // 4*y1*y2*cos(w_k)
-    goertzel_mul #(.B(B)) mul_y1_y2 (CLK, RST, 
-                                     4*y1, 
-                                     cos_w_k*y2, 
+    // y1*y2
+    goertzel_mul #(.B(B)) mul_y1_y2 (CLK, RST, 1'b1,
+                                     y1, 
+                                     y2, 
                                      y1_y2);
-               
-    always @(posedge CLK) begin
-        power <= y1_sqr + y2_sqr - y1_y2;
-    end
+              
+    // y1*y2*2*cos(w_k)
+    goertzel_mul #(.B(B)) mul_cos (CLK, RST, 1'b1,
+                                   y1_y2, 
+                                   val, 
+                                   cos);
+    
+    goertzel_add #(.B(B)) add (CLK, RST, 1'b1,
+                               y1_sqr,
+                               y2_sqr,
+                               -cos,
+                               power);
+    
+    assign out = power;
     
 endmodule

@@ -20,53 +20,36 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module sim_goertzel(
-    );
+//module sim_goertzel(
+//    );
     
-    sim_goertzel_fp sim_fp();
-    sim_goertzel_mul sim_mul();
-    sim_goertzel_reg sim_reg();
+//    sim_goertzel_fp sim_fp();
+//    sim_goertzel_mul sim_mul();
+//    sim_goertzel_reg sim_reg();
     
-    // 100MHz clock
-    reg CLK = 0;
-    always begin
-        #5 CLK <= ~CLK;
-    end
+//    // 100MHz clock
+//    reg CLK = 0;
+//    always begin
+//        #5 CLK <= ~CLK;
+//    end
     
-    // Sine wave generator
-    wire [11:0] sine;
-    sine_gen #(.SIZE(129870)) sine_gen (CLK, sine); 
+//    // Input waveform
+//    wire [11:0] mic;
+//    wire mic_clk;
+//    fclk #(.khz(20)) fclk (CLK, mic_clk);
+//    input_gen #(.SIZE(171)) input_gen (mic_clk, mic); 
     
-    reg [11:0] mic = 0;
-    wire [60:0] y1_0;
-    wire [60:0] y2_0;
-    wire [60:0] y1_7;
-    wire [60:0] y2_7;
+//    parameter [7:0][7:0] BINS = {7'd5, 7'd6, 7'd7, 7'd8, 7'd10, 7'd11, 7'd12, 7'd13};
+//    wire [31:0] y1 [7:0];
+//    wire [31:0] y2 [7:0];
+//    wire [31:0] power [7:0];
     
-    wire [60:0] power_0;
-    goertzel_power #(.k(0)) goertzel_power_0(CLK, 1'b0, y1_0, y2_0, power_0);        
-   
-    // Simulate microphone sampling rate
-    wire clk_20k;
-    fclk #(.khz(20)) clk_20khz(CLK, clk_20k);
+//    genvar k;
+//    generate 
+//        for (k = 0; k < 7; k = k+1) begin
+//            goertzel_v2 #(.k(BINS[k])) filter_v2 (CLK, 1'b0, mic, y1[k], y2[k]);
+//            goertzel_power_v2 #(.k(BINS[k])) power_v2 (CLK, 1'b0, y1[k], y2[k], power[k]);
+//        end
+//    endgenerate
     
-    wire mic_ready;
-    edge_detector mic_clk_edge (CLK, clk_20k, mic_ready);
-    
-    reg [7:0] sample_ctr = 0;
-    always @(posedge clk_20k) begin
-        mic <= sine;
-        sample_ctr <= (sample_ctr + 1);
-        if (sample_ctr == 40) begin
-            sample_ctr <= 0;
-            // Compute powers
-             
-        end
-    end
-    
-    goertzel #(.k(0)) goertzel_0(CLK, 1'b0, mic_ready, mic, y1_0, y2_0);
-//    goertzel #(.k(7)) goertzel_5(CLK, 1'b0, mic_ready, mic, y1_7, y2_7); 
-    
-    
-    
-endmodule
+//endmodule

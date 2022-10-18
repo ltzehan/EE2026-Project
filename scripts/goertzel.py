@@ -43,6 +43,7 @@ def goertzel(samples, sample_rate, *freqs):
         f = k * f_step_normalized
         w_real = 2.0 * math.cos(2.0 * math.pi * f)
         w_imag = math.sin(2.0 * math.pi * f)
+        # print("k =", k, "f =", f, "w_real =", w_real)
 
         # Doing the calculation on the whole sample
         d1, d2 = 0.0, 0.0
@@ -60,35 +61,35 @@ if __name__ == "__main__":
     # quick test
 
     # generating test signals
-    SAMPLE_RATE = 44100
-    WINDOW_SIZE = 1024
+    SAMPLE_RATE = 20_000
+    WINDOW_SIZE = 171
     t = np.linspace(0, 1, SAMPLE_RATE)[:WINDOW_SIZE]
-    sine_wave = np.sin(2 * np.pi * 440 * t) + np.sin(2 * np.pi * 1020 * t) + 3
+    sine_wave = np.sin(2 * np.pi * 697 * t) + np.sin(2 * np.pi * 1477 * t) + 3
     sine_wave = sine_wave * np.hamming(WINDOW_SIZE)
-    sine_wave2 = np.sin(2 * np.pi * 880 * t) + np.sin(2 * np.pi * 1500 * t)
+    sine_wave2 = np.sin(2 * np.pi * 852 * t) + np.sin(2 * np.pi * 1633 * t)
     sine_wave2 = sine_wave2 * np.hamming(WINDOW_SIZE)
 
     # applying Goertzel on those signals, and plotting results
-    freqs, results = goertzel(sine_wave, SAMPLE_RATE, (400, 500), (1000, 1100))
+    freqs, results = goertzel(sine_wave, SAMPLE_RATE, (600, 1700))
 
     pylab.subplot(2, 2, 1)
-    pylab.title("(1) Sine wave 440Hz + 1020Hz")
+    pylab.title("(1) Sine wave 697Hz + 1477Hz")
     pylab.plot(t, sine_wave)
 
     pylab.subplot(2, 2, 3)
     pylab.title("(1) Goertzel Algo, freqency ranges : [400, 500] and [1000, 1100]")
     pylab.plot(freqs, np.array(results)[:, 2], "o")
-    pylab.ylim([0, 100000])
+    pylab.ylim([0, 5000])
 
-    freqs, results = goertzel(sine_wave2, SAMPLE_RATE, (700, 900), (1400, 1600))
+    freqs, results = goertzel(sine_wave2, SAMPLE_RATE, (600, 1700))
 
     pylab.subplot(2, 2, 2)
-    pylab.title("(2) Sine wave 660Hz + 1200Hz")
+    pylab.title("(2) Sine wave 852Hz + 1633Hz")
     pylab.plot(t, sine_wave2)
 
     pylab.subplot(2, 2, 4)
     pylab.title("(2) Goertzel Algo, freqency ranges : [400, 500] and [1000, 1100]")
     pylab.plot(freqs, np.array(results)[:, 2], "o")
-    pylab.ylim([0, 100000])
+    pylab.ylim([0, 5000])
 
     pylab.show()

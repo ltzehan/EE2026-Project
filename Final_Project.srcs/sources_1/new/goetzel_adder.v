@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 17.10.2022 11:42:07
+// Create Date: 17.10.2022 20:41:18
 // Design Name: 
-// Module Name: goertzel_fp
+// Module Name: goetzel_adder
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,27 +19,36 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-// Convert microphone input to fixed-point representation
-module goertzel_fp #(
+
+module goertzel_add #(
     parameter B=61
     ) (
     input CLK,
     input RST,
     input EN,
-    input [11:0] mic,
-    output reg signed [B-1:0] x=0
+    input signed [B-1:0] a,
+    input signed [B-1:0] b,
+    input signed [B-1:0] c,
+    output reg signed [B-1:0] y=0
     );
-
+    
+    // TODO: Why is this 2 bits larger? Does [B:0] not work
+    wire signed [B+1:0] s_a;
+    wire signed [B+1:0] s_b;
+    wire signed [B+1:0] s_c;
+    wire signed [B+1:0] s_y;
+    
+    assign s_a = $signed(a);
+    assign s_b = $signed(b);
+    assign s_c = $signed(c);
+    assign s_y = s_a + s_b + s_c;
+    
     always @(posedge CLK or posedge RST) begin
         if (RST) begin
-            x <= 0;
+            y <= 0;
         end
         else if (EN) begin
-            // Sign bit is always 0 (mic. input is unsigned)
-            // Normalize input (x / 2^12) and clear integer part + pad lower bits of decimal part 
-//            x <= {1'b0, {B_PART{1'b0}}, mic[11:0], {(B_PART-12){1'b0}}};
-            x <= {31'b0, mic[11:0], 19'b0};
-//            x <= {19'b0, mic, 30'b0};
+            y <= $signed(s_y);
         end
     end
     
