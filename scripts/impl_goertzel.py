@@ -118,13 +118,13 @@ if __name__ == "__main__":
 
     t = np.linspace(0, 1, SAMPLE_FREQ)[:SAMPLE_NUM]
     # dtmf = [697, 770, 852, 941, 1209, 1336, 1477, 1633]
-    dtmf = [1336]
+    dtmf = [941]
     # dtmf_sample = [np.sin(2 * np.pi * freq * t) for freq in dtmf]
     dtmf_sample = [
         # np.sin(2 * np.pi * freq * t)
         int(OUT_AMP / 4) * np.sin(2 * np.pi * freq * t)
         + int(OUT_AMP / 2)
-        + int(OUT_AMP / 4) * np.sin(2 * np.pi * 697 * t)
+        + int(OUT_AMP / 4) * np.sin(2 * np.pi * 1209 * t)
         for freq in dtmf
     ]
 
