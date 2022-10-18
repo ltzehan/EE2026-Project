@@ -1,4 +1,5 @@
 import math
+from pprint import pprint
 
 dtmf = [697, 770, 852, 941, 1209, 1336, 1477, 1633]
 
@@ -38,9 +39,9 @@ def calc_bin(N):
 
 
 if __name__ == "__main__":
-    calc_bin(205)
+    # calc_bin(205)
     # calc_bin(105)
-    # calc_bin(171)
+    calc_bin(283)
 
     ok = []
     n = 1
@@ -48,8 +49,10 @@ if __name__ == "__main__":
         # err = calc_bin(n)
         # if err != False:
         #     ok.append((err, n))
+
         if calc_bin(n):
             break
+
         n += 1
 
-    # print(sorted(ok))
+    # pprint(sorted(ok))

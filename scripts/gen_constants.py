@@ -1,3 +1,4 @@
+from clize import run
 from fxpmath import Fxp
 import math
 
@@ -5,10 +6,10 @@ B_DEC = 16
 B_FRAC = 15
 B_WORD = 1 + B_DEC + B_FRAC
 
-SAMPLE_FREQ = 8_000
-N = 205
-# SAMPLE_FREQ = 20_000
-# N = 171
+# SAMPLE_FREQ = 8_000
+# N = 205
+SAMPLE_FREQ = 20_000
+N = 283
 
 # To fixed-point representation
 def fp(x):
@@ -25,5 +26,7 @@ if __name__ == "__main__":
 
         val.append(fp(cos_w_k))
 
+    print("Sample freq.  :", SAMPLE_FREQ)
+    print("Sample count. :", N)
     with open("val.mem", "w") as ff:
         ff.write("\n".join(val))

@@ -34,7 +34,8 @@ def goertzel(samples, sample_rate):
     f_bin = sample_rate / len(samples)
     # bins = [f_bin * k for k in range(len(samples))]
 
-    bins = [18, 20, 22, 24, 31, 34, 38, 42]
+    bins = [10, 11, 12, 13, 17, 19, 21, 23]
+    # bins = [18, 20, 22, 24, 31, 34, 38, 42]
     # bins = [42]
 
     freqs = []
@@ -107,10 +108,10 @@ def goertzel(samples, sample_rate):
 
 if __name__ == "__main__":
 
-    # SAMPLE_FREQ = 20_000
-    # SAMPLE_NUM = 171
-    SAMPLE_FREQ = 8_000
-    SAMPLE_NUM = 205
+    SAMPLE_FREQ = 20_000
+    SAMPLE_NUM = 283
+    # SAMPLE_FREQ = 8_000
+    # SAMPLE_NUM = 205
 
     OUT_BITS = 12
     OUT_AMP = 2**OUT_BITS - 1
