@@ -21,22 +21,30 @@ def fp(x):
     # return Fxp(x, signed=True, n_word=B_WORD, n_frac=B_FRAC)
 
 
-def ashex(fp):
-    return hex(int(float(fp) * 2**B_FRAC))
+def ashex(x):
+    return Fxp(float(x), signed=True, n_word=(1 + B_INT + B_FRAC), n_frac=B_FRAC).hex()
+
+
+# def ashex(fp):
+#     return hex(int(float(fp) * 2**B_FRAC))
 
 
 def goertzel(samples, sample_rate):
     # Frequency spacing between bins
     f_bin = sample_rate / len(samples)
-    bins = [f_bin * k for k in range(len(samples))]
+    # bins = [f_bin * k for k in range(len(samples))]
+
+    bins = [18, 20, 22, 24, 31, 34, 38, 42]
+    # bins = [42]
 
     freqs = []
     result = []
-    for (k, freq) in enumerate(bins):
+    for k in bins:
         # if k != 1:
         #     continue
-        if freq >= 3000:
-            break
+        # if freq >= 3000:
+        #     break
+        freq = k * f_bin
 
         w_k = 2 * np.pi * freq / sample_rate
         cos_w_k = 2 * math.cos(w_k)
@@ -85,11 +93,11 @@ def goertzel(samples, sample_rate):
         print("s        =", ashex(s), "\t", s)
         print("y1       =", ashex(y1), "\t", y1)
         print("y2       =", ashex(y2), "\t", y2)
-        # print("y1_sqr   =", y1_sqr)
-        # print("y2_sqr   =", y2_sqr)
-        # print("y1_y2    =", y1_y2)
-        # print("y1_y2_val=", y1_y2_val)
-        # print("power    =", power)
+        print("y1_sqr   =", ashex(y1_sqr), "\t", y1_sqr)
+        print("y2_sqr   =", ashex(y2_sqr), "\t", y2_sqr)
+        print("y1_y2    =", ashex(y1_y2), "\t", y1_y2)
+        print("y1_y2_val=", ashex(y1_y2_val), "\t", y1_y2_val)
+        print("power    =", ashex(power), "\t", power)
 
         freqs.append(freq)
         result.append(power)
@@ -99,21 +107,23 @@ def goertzel(samples, sample_rate):
 
 if __name__ == "__main__":
 
-    SAMPLE_FREQ = 20_000
-    SAMPLE_NUM = 171
+    # SAMPLE_FREQ = 20_000
+    # SAMPLE_NUM = 171
+    SAMPLE_FREQ = 8_000
+    SAMPLE_NUM = 205
 
     OUT_BITS = 12
     OUT_AMP = 2**OUT_BITS - 1
 
     t = np.linspace(0, 1, SAMPLE_FREQ)[:SAMPLE_NUM]
     # dtmf = [697, 770, 852, 941, 1209, 1336, 1477, 1633]
-    dtmf = [1633]
+    dtmf = [1336]
     # dtmf_sample = [np.sin(2 * np.pi * freq * t) for freq in dtmf]
     dtmf_sample = [
         # np.sin(2 * np.pi * freq * t)
         int(OUT_AMP / 4) * np.sin(2 * np.pi * freq * t)
         + int(OUT_AMP / 2)
-        + int(OUT_AMP / 5) * np.sin(2 * np.pi * 697 * t)
+        + int(OUT_AMP / 4) * np.sin(2 * np.pi * 697 * t)
         for freq in dtmf
     ]
 

@@ -40,11 +40,7 @@ module goertzel_v2 (
         val = val_arr[k];
         $display("[goertzel_v2] k = %d; val = %h", k, val);
     end
-    
-    
-    wire clk_20khz;
-    fclk #(.khz(20)) mic_clk(CLK, clk_20khz);
-    
+        
     wire signed [31:0] x;
     wire signed [63:0] s1_val_mul_64;
     wire signed [31:0] s1_val_mul;
@@ -61,7 +57,7 @@ module goertzel_v2 (
     // x[n] + 2*cos(w_k)*s[n-1]*val - s[n-2]
     assign s = x + s1_val_mul - s2; 
     
-    always @(posedge clk_20khz or posedge RST) begin
+    always @(posedge CLK or posedge RST) begin
         if (RST) begin
             s1 <= 0;
             s2 <= 0;
@@ -72,7 +68,7 @@ module goertzel_v2 (
         end
     end
     
-    assign y1 = s1;
-    assign y2 = s2;
+    assign y1 = s;
+    assign y2 = s1;
     
 endmodule
