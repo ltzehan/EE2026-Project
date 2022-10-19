@@ -69,7 +69,7 @@ module goertzel_wrapper(
     localparam [7:0][7:0] POWER_SCALE = {8'd16, 8'd17, 8'd18, 8'd18, 8'd19, 8'd19, 8'd19, 8'd19};
     reg [5:0] power_height [7:0];  // [0, 63]
     // Will only be zero if pixel is not part of any bars 
-    reg [7:0] draw_spectra;
+    reg [7:0] spectra_active;
     
     // Bar dimensions
     localparam MIN_BAR_W = 6;
@@ -97,7 +97,7 @@ module goertzel_wrapper(
                 .y1(OLED_H-power_height[p]), 
                 .x2((p+1)*MAX_BAR_W - bar_margin), 
                 .y2(OLED_H), 
-                .active(draw_spectra[p])
+                .active(spectra_active[p])
                 );
 
             always @(posedge mic_clk) begin
@@ -108,20 +108,20 @@ module goertzel_wrapper(
         end
     endgenerate
     
-//    // Frequency Overlay
-//    wire overlay_active;
-//    dtmf_overlay dtmf_overlay(pixel, overlay_active);
+    // Frequency Overlay
+    wire overlay_active;
+    dtmf_overlay dtmf_overlay(pixel, overlay_active);
     
-//    // OLED colour
-//    always @(posedge CLK) begin
-//        // Show frequency overlay
-//        if (sw) begin
-            
-//        end
-//        else begin
-//            oled_data <= (draw_spectra == 0) ? OLED_GREEN : OLED_RED;
-//        end
-//    end
+    // OLED colour
+    always @(posedge CLK) begin
+        // Show frequency overlay
+        if (sw && overlay_active)
+            oled_data <= OLED_WHITE;
+        else if (spectra_active)
+            oled_data <= OLED_RED;
+        else
+            oled_data <= OLED_BLACK;
+    end
     
     /**
      *  Tone Classification

@@ -37,6 +37,8 @@ localparam OLED_H = 64;
 localparam OLED_RED        = {{5{1'b1}}, {11{1'b0}}}; 
 localparam OLED_ORANGE     = {{5{1'b1}}, 6'b101001, {5{1'b0}}}; 
 localparam OLED_GREEN      = {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+localparam OLED_BLACK      = {16{1'b0}};
+localparam OLED_WHITE      = {16{1'b1}};
 
 //
 //  Menu states

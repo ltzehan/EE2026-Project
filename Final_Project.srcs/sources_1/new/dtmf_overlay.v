@@ -125,5 +125,7 @@ module dtmf_overlay(
             active <= 1;
         else if (x == 92 && (y == 5 || y == 9 || y == 10 || y == 14 || y == 15))
             active <= 1;
+        else
+            active <= 0;
     end
 endmodule
