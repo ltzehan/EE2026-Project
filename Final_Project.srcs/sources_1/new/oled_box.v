@@ -19,8 +19,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-parameter OLED_W = 96;
-parameter OLED_H = 64;
 
 module xy_to_px(
     input [7:0] x,
@@ -41,6 +39,22 @@ module px_to_xy(
     assign x = px % OLED_W;
     assign y = px / OLED_W;
 
+endmodule
+
+module draw_filled_box(
+    input [12:0] pixel,
+    input [7:0] x1,
+    input [7:0] y1,
+    input [7:0] x2,
+    input [7:0] y2,
+    output active
+    );
+    
+    wire [7:0] px, py;
+    px_to_xy(pixel, px, py);
+    
+    assign active = (py >= y1) && (py <= y2) && (px >= x1) && (px <= x2); 
+    
 endmodule
 
 module draw_box(

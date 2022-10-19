@@ -14,7 +14,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module Top_Student (
+
+module Top_Student(
     input CLK,
     input [1:0] sw,
     input btnU, input btnL, input btnR, input btnD, input btnC, 
@@ -23,6 +24,8 @@ module Top_Student (
     output reg [15:0] led,
     output reg [6:0] seg, output reg [3:0] an
     );
+
+    `include "constants.v"
 
     // 20kHz clock
     wire clk20k;
@@ -79,9 +82,12 @@ module Top_Student (
      */
      
     wire [7:0] dtmf_led;
+    wire [15:0] dtmf_oled_data;
     goertzel_wrapper(
         .mic_clk(clk20k),
         .mic(mic_out),
+        .pixel(pixel_index),
+        .oled_data(dtmf_oled_data),
         .led(dtmf_led)
         );
 
@@ -175,6 +181,7 @@ module Top_Student (
             led[4:0] <= task_4c_led;
         end
         else if (task_state == MENU_DTMF) begin
+            oled_data <= dtmf_oled_data;
             led[7:0] <= dtmf_led;
         end
         else if (task_state == MENU_INACTIVE) begin

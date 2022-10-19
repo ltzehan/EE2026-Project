@@ -34,7 +34,7 @@ module input_gen(
     reg [31:0] i = 0;
     always @(posedge CLK) begin
         out <= input_mem[i];
-        i <= (i == SIZE) ? 0 : i+1; 
+        i <= (i == SIZE-1) ? 0 : i+1; 
     end
     
 endmodule

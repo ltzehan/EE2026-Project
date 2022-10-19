@@ -23,8 +23,16 @@
 module goertzel_wrapper(
     input mic_clk,
     input [11:0] mic,
+    input [12:0] pixel,
+    output reg [15:0] oled_data,
     output reg [7:0] led=0
     );
+    
+    `include "constants.v"
+            
+    /**
+     *  Filter
+     */
     
     parameter SIZE = 283;
     localparam [7:0][7:0] BINS = {8'd10, 8'd11, 8'd12, 8'd13, 8'd17, 8'd19, 8'd21, 8'd23};
@@ -39,6 +47,32 @@ module goertzel_wrapper(
             goertzel_power_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_power_v2 (mic_clk, 1'b0, y1[k], y2[k], power[k]);
         end
     endgenerate
+    
+    /**
+     *  Spectra
+     */
+    
+    // Scale power to bar height
+    localparam MAX_POWER = 32'h300_0000;
+    localparam POWER_SCALE = 7'd20;
+    localparam SPECTRA_WIDTH = 12;
+    wire [5:0] power_height [7:0];  // [0, 63]
+    wire [7:0] draw_spectra;
+    
+    genvar p;
+    generate
+        for (p = 0; p <= 7; p = p+1) begin
+            assign power_height[p] = power[p] >> 20;    // [0, 48]
+//            assign power_height[p] = p*8;
+            draw_filled_box (pixel, p*SPECTRA_WIDTH, OLED_H-power_height[p], (p+1)*SPECTRA_WIDTH, OLED_H, draw_spectra[p]);  
+        end
+    endgenerate
+    
+    assign oled_data = draw_spectra == 0 ? OLED_GREEN : OLED_RED;
+    
+    /**
+     *  Tone Classification
+     */
     
     localparam THRESHOLD = 32'hFFFF;
     reg [3:0] i;

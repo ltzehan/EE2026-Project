@@ -19,11 +19,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-parameter MENU_INACTIVE = 0;
-parameter MENU_OLED_A = 1;
-parameter MENU_OLED_B = 2;
-parameter MENU_AVI = 3;
-parameter MENU_DTMF = 4;
 
 module menu(
     input CLK,

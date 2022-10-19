@@ -59,7 +59,8 @@ module sim_goertzel(
     reg [31:0] col_max_val;
     reg col_valid = 0;
     reg [8:0] ctr = 0;
-     
+    
+    reg [15:0] led = 0;
     always @(posedge mic_clk) begin
         ctr <= (ctr == SIZE) ? 0 : ctr+1;
         // Peak detector
@@ -83,6 +84,11 @@ module sim_goertzel(
                     col_idx = i;
                     col_valid = 1;
                 end           
+            end
+            
+            if (row_valid & col_valid) begin
+                led[row_idx] <= 1;
+                led[col_idx+4] <= 1;
             end
         end
     end
