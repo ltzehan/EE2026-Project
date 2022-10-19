@@ -110,7 +110,7 @@ module goertzel_wrapper(
     
     // Frequency Overlay
     wire overlay_active;
-    dtmf_overlay dtmf_overlay(pixel, overlay_active);
+    dtmf_overlay dtmf_overlay(CLK, pixel, overlay_active);
     
     // OLED colour
     always @(posedge CLK) begin
