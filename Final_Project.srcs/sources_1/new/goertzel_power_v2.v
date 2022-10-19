@@ -22,7 +22,6 @@
 
 module goertzel_power_v2(
     input CLK,
-    input RST,
     input signed [31:0] y1,
     input signed [31:0] y2,
     output signed [31:0] out

@@ -21,7 +21,10 @@
 
 
 module goertzel_wrapper(
+    input CLK,
     input mic_clk,
+    input btnL, input btnR,
+    input sw,
     input [11:0] mic,
     input [12:0] pixel,
     output reg [15:0] oled_data,
@@ -39,14 +42,22 @@ module goertzel_wrapper(
     wire [31:0] y1 [7:0];
     wire [31:0] y2 [7:0];
     wire [31:0] power [7:0];
+    wire RST;
 
     genvar k;
     generate 
         for (k = 0; k <= 7; k = k+1) begin
-            goertzel_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_v2 (mic_clk, 1'b0, mic, y1[k], y2[k]);
-            goertzel_power_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_power_v2 (mic_clk, 1'b0, y1[k], y2[k], power[k]);
+            goertzel_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_v2 (mic_clk, RST, mic, y1[k], y2[k]);
+            goertzel_power_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_power_v2 (mic_clk, y1[k], y2[k], power[k]);
         end
     endgenerate
+    
+    // Sample counter
+    reg [8:0] ctr = 0;
+    assign RST = (ctr == 0);
+    always @(posedge mic_clk) begin
+         ctr <= (ctr == SIZE) ? 0 : ctr+1;       
+    end
     
     /**
      *  Spectra
@@ -54,20 +65,63 @@ module goertzel_wrapper(
     
     // Scale power to bar height
     localparam MAX_POWER = 32'h300_0000;
-    localparam POWER_SCALE = 7'd20;
-    localparam SPECTRA_WIDTH = 12;
-    wire [5:0] power_height [7:0];  // [0, 63]
-    wire [7:0] draw_spectra;
+    // Empirically determined
+    localparam [7:0][7:0] POWER_SCALE = {8'd16, 8'd17, 8'd18, 8'd18, 8'd19, 8'd19, 8'd19, 8'd19};
+    reg [5:0] power_height [7:0];  // [0, 63]
+    // Will only be zero if pixel is not part of any bars 
+    reg [7:0] draw_spectra;
     
+    // Bar dimensions
+    localparam MIN_BAR_W = 6;
+    localparam MAX_BAR_W = 12;
+    wire [7:0] bar_margin;
+    reg [7:0] bar_width = 10; // px
+    
+    assign bar_margin = (MAX_BAR_W - bar_width) >> 1;
+    always @(posedge CLK) begin
+        if (btnL) begin
+            bar_width <= (bar_width == MIN_BAR_W) ? MIN_BAR_W : bar_width - 2;
+        end
+        else if (btnR) begin
+            bar_width <= (bar_width == MAX_BAR_W) ? MAX_BAR_W : bar_width + 2;
+        end
+    end
+    
+    // Generate bars for each frequency bin
     genvar p;
     generate
         for (p = 0; p <= 7; p = p+1) begin
-            assign power_height[p] = power[p] >> 20;    // [0, 48]
-            draw_filled_box dtmf_bar(pixel, p*SPECTRA_WIDTH, OLED_H-power_height[p], (p+1)*SPECTRA_WIDTH, OLED_H, draw_spectra[p]);  
+            draw_filled_box dtmf_bar(
+                .pixel(pixel), 
+                .x1(p*MAX_BAR_W + bar_margin), 
+                .y1(OLED_H-power_height[p]), 
+                .x2((p+1)*MAX_BAR_W - bar_margin), 
+                .y2(OLED_H), 
+                .active(draw_spectra[p])
+                );
+
+            always @(posedge mic_clk) begin
+                // Update spectra after every sampling cycle
+                if (ctr == SIZE)
+                    power_height[p] <= (power[p] >> POWER_SCALE[p]);
+            end
         end
     endgenerate
     
-    assign oled_data = draw_spectra == 0 ? OLED_GREEN : OLED_RED;
+//    // Frequency Overlay
+//    wire overlay_active;
+//    dtmf_overlay dtmf_overlay(pixel, overlay_active);
+    
+//    // OLED colour
+//    always @(posedge CLK) begin
+//        // Show frequency overlay
+//        if (sw) begin
+            
+//        end
+//        else begin
+//            oled_data <= (draw_spectra == 0) ? OLED_GREEN : OLED_RED;
+//        end
+//    end
     
     /**
      *  Tone Classification
@@ -81,10 +135,8 @@ module goertzel_wrapper(
     reg [2:0] col_idx;
     reg [31:0] col_max_val;
     reg col_valid = 0;
-    reg [8:0] ctr = 0;
-     
+    
     always @(posedge mic_clk) begin
-        ctr <= (ctr == SIZE) ? 0 : ctr+1;
         // Peak detector
         if (ctr == SIZE) begin
             row_max_val = THRESHOLD;
