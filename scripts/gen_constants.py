@@ -24,6 +24,7 @@ if __name__ == "__main__":
         w_k = 2 * math.pi * f_bin * k / SAMPLE_FREQ
         cos_w_k = 2 * math.cos(w_k)
 
+        print(f"val_arr[{k}] <= 32'h{fp(cos_w_k)[2:]};")
         val.append(fp(cos_w_k))
 
     print("Sample freq.  :", SAMPLE_FREQ)

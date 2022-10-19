@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="12742936373103fs"></ZoomStartTime>
-      <ZoomEndTime time="14443412725380fs"></ZoomEndTime>
-      <Cursor1Time time="14160000000000fs"></Cursor1Time>
+      <ZoomStartTime time="13852500000000fs"></ZoomStartTime>
+      <ZoomEndTime time="14509500000001fs"></ZoomEndTime>
+      <Cursor1Time time="14400000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="169"></NameColumnWidth>
-      <ValueColumnWidth column_width="68"></ValueColumnWidth>
+      <ValueColumnWidth column_width="64"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="7" />
    <wave_markers>
       <marker time="6018870922000" label="" />
    </wave_markers>
@@ -37,40 +37,22 @@
       <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/y1" type="array">
-      <obj_property name="ElementShortName">y1[7:0][31:0]</obj_property>
-      <obj_property name="ObjectShortName">y1[7:0][31:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
+   <wvobject fp_name="/sim_goertzel/dtmf_oled_data" type="array">
+      <obj_property name="ElementShortName">dtmf_oled_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dtmf_oled_data[15:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/y2" type="array">
-      <obj_property name="ElementShortName">y2[7:0][31:0]</obj_property>
-      <obj_property name="ObjectShortName">y2[7:0][31:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
+   <wvobject fp_name="/sim_goertzel/dtmf_led" type="array">
+      <obj_property name="ElementShortName">dtmf_led[7:0]</obj_property>
+      <obj_property name="ObjectShortName">dtmf_led[7:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/power" type="array">
+   <wvobject fp_name="/sim_goertzel/dtmf/power" type="array">
       <obj_property name="ElementShortName">power[7:0][31:0]</obj_property>
       <obj_property name="ObjectShortName">power[7:0][31:0]</obj_property>
       <obj_property name="isExpanded"></obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/row_idx" type="array">
-      <obj_property name="ElementShortName">row_idx[2:0]</obj_property>
-      <obj_property name="ObjectShortName">row_idx[2:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/row_valid" type="logic">
-      <obj_property name="ElementShortName">row_valid</obj_property>
-      <obj_property name="ObjectShortName">row_valid</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/col_idx" type="array">
-      <obj_property name="ElementShortName">col_idx[2:0]</obj_property>
-      <obj_property name="ObjectShortName">col_idx[2:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/col_valid" type="logic">
-      <obj_property name="ElementShortName">col_valid</obj_property>
-      <obj_property name="ObjectShortName">col_valid</obj_property>
-   </wvobject>
-   <wvobject fp_name="/sim_goertzel/ctr" type="array">
-      <obj_property name="ElementShortName">ctr[8:0]</obj_property>
-      <obj_property name="ObjectShortName">ctr[8:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/sim_goertzel/dtmf/power_height" type="array">
+      <obj_property name="ElementShortName">power_height[7:0][5:0]</obj_property>
+      <obj_property name="ObjectShortName">power_height[7:0][5:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
 </wave_config>

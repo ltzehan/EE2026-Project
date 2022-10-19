@@ -3,6 +3,8 @@ Final_Project.hw/
 Final_Project.runs/
 Final_Project.sim/
 
+.Xil/
+
 *.jou
 *.log
 *.str

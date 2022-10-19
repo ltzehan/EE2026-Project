@@ -63,8 +63,7 @@ module goertzel_wrapper(
     generate
         for (p = 0; p <= 7; p = p+1) begin
             assign power_height[p] = power[p] >> 20;    // [0, 48]
-//            assign power_height[p] = p*8;
-            draw_filled_box (pixel, p*SPECTRA_WIDTH, OLED_H-power_height[p], (p+1)*SPECTRA_WIDTH, OLED_H, draw_spectra[p]);  
+            draw_filled_box dtmf_bar(pixel, p*SPECTRA_WIDTH, OLED_H-power_height[p], (p+1)*SPECTRA_WIDTH, OLED_H, draw_spectra[p]);  
         end
     endgenerate
     

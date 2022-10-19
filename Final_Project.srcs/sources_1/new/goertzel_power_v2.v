@@ -29,17 +29,13 @@ module goertzel_power_v2(
     );
     
     // Number of samples
-    parameter N = 171;
+    parameter N = 283;
     // Frequency bin (0 <= k <= N-1)
     parameter k = 0;
     
     // Load values of 2*cos(w_k)
-    reg signed [31:0] val_arr [N-1:0];
-    reg signed [31:0] val;
-    initial begin
-        $readmemh("val.mem", val_arr);
-        val = val_arr[k];
-    end
+    wire signed [31:0] val;
+    goertzel_val #(.N(N), .k(k)) rom (val);
     
     wire signed [63:0] y1_sqr_64;
     wire signed [63:0] y2_sqr_64;
