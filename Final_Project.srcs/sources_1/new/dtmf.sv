@@ -192,7 +192,6 @@ module dtmf(
             led <= 0;
             seg <= SEG_BLANK;
         end
-
     end
     
 endmodule
