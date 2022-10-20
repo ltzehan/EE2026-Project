@@ -76,7 +76,7 @@ module dtmf(
     localparam MIN_BAR_W = 6;
     localparam MAX_BAR_W = 12;
     wire [7:0] bar_margin;
-    reg [7:0] bar_width = 10; // px
+    reg [7:0] bar_width = 8; // px
     
     assign bar_margin = (MAX_BAR_W - bar_width) >> 1;
     always @(posedge CLK) begin
@@ -122,14 +122,14 @@ module dtmf(
             oled_data <= OLED_RED;
         else
             oled_data <= OLED_BLACK;
-    end
+    end 
     
     /**
      *  Tone Classification
      */
     
     // Peak finding
-    localparam THRESHOLD = 32'hFFFF;
+    localparam THRESHOLD = 32'hF000;
     reg [3:0] i;
     reg [2:0] row_idx;
     reg row_valid = 0;
@@ -146,6 +146,7 @@ module dtmf(
                                         SEG_7, SEG_8, SEG_9, SEG_C,
                                         SEG_ASTR, SEG_0, SEG_HASH, SEG_D
                                        };
+    reg [15:0] clear_ctr;
     
     always @(posedge mic_clk) begin
         // Peak detector
@@ -175,6 +176,7 @@ module dtmf(
             if (row_valid && col_valid) begin
                 led[(row_idx * 4) + col_idx] <= 1;
                 seg <= dtmf_seg[(row_idx * 4) + col_idx];
+                clear_ctr <= 0;
             end
         end
         
@@ -182,6 +184,11 @@ module dtmf(
         if (ctr == 0) begin
             row_valid <= 0;
             col_valid <= 0;
+        end
+        
+        clear_ctr <= clear_ctr + 1;
+        if (clear_ctr > 4000) begin
+            clear_ctr <= 0;
             led <= 0;
             seg <= SEG_BLANK;
         end
