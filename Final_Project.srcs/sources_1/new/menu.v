@@ -36,24 +36,10 @@ module menu(
                 task_state <= MENU_INACTIVE; 
             end
         end
-        else if (state == MENU_OLED_A) begin
-            if (btnR)
+        else begin
+            if (btnR && state != MENU_MORSE)
                 state <= state + 1;
-        end
-        else if (state == MENU_OLED_B) begin
-            if (btnL)
-                state <= state - 1;
-            else if (btnR)
-                state <= state + 1;
-        end
-        else if (state == MENU_AVI) begin
-            if (btnL)
-                state <= state - 1;
-            else if (btnR)
-                state <= state + 1;
-        end
-        else if (state == MENU_DTMF) begin
-            if (btnL)
+            else if (btnL && state != MENU_OLED_A)
                 state <= state - 1;
         end
         

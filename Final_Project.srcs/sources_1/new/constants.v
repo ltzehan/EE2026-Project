@@ -49,6 +49,7 @@ localparam MENU_OLED_A     = 1;
 localparam MENU_OLED_B     = 2;
 localparam MENU_AVI        = 3;
 localparam MENU_DTMF       = 4;
+localparam MENU_MORSE      = 5;
 
 //
 //  7-segment
@@ -60,6 +61,9 @@ localparam SEG_B       = 7'b0000011;
 localparam SEG_C       = 7'b0100111;
 localparam SEG_D       = 7'b0100001;
 localparam SEG_F       = 7'b0001110;
+localparam SEG_O       = 7'b0100011;
+localparam SEG_R       = 7'b0101111;
+localparam SEG_S       = 7'b0010010;
 localparam SEG_M       = 7'b0101010;
 localparam SEG_T       = 7'b0000111;
 localparam SEG_0       = 7'b1000000;

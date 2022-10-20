@@ -129,6 +129,11 @@ module Top_Student(
         .task_4c_led(task_4c_led),
         .oled_data(task_oled_data)
         );
+        
+    /**
+     *  Morse code
+     */
+    // TODO
 
     /**
      *  LEDs and 7-segments
@@ -165,6 +170,12 @@ module Top_Student(
                 char2 <= SEG_M;
                 char3 <= SEG_F;
             end
+            MENU_MORSE: begin
+                char0 <= SEG_M;
+                char1 <= SEG_O;
+                char2 <= SEG_R;
+                char3 <= SEG_S;
+            end
             
         endcase
     end
@@ -191,6 +202,9 @@ module Top_Student(
             led[15:0] <= dtmf_led;
             seg <= dtmf_seg;
             an <= 0; 
+        end
+        else if (task_state == MENU_MORSE) begin
+            // TODO
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;
