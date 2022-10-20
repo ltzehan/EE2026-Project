@@ -81,7 +81,8 @@ module Top_Student(
      *  Goertzel Filter
      */
      
-    wire [7:0] dtmf_led;
+    wire [6:0] dtmf_seg;
+    wire [15:0] dtmf_led;
     wire [15:0] dtmf_oled_data;
     goertzel_wrapper(
         .CLK(CLK),
@@ -92,6 +93,7 @@ module Top_Student(
         .mic(mic_out),
         .pixel(pixel_index),
         .oled_data(dtmf_oled_data),
+        .seg(dtmf_seg),
         .led(dtmf_led)
         );
 
@@ -186,7 +188,9 @@ module Top_Student(
         end
         else if (task_state == MENU_DTMF) begin
             oled_data <= dtmf_oled_data;
-            led[7:0] <= dtmf_led;
+            led[15:0] <= dtmf_led;
+            seg <= dtmf_seg;
+            an <= 0; 
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;

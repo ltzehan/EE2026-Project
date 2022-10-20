@@ -27,7 +27,7 @@ module test_dtmf(
     input J_MIC3_Pin3, output J_MIC3_Pin1, output J_MIC3_Pin4,
     output [6:0] JX,
     output reg [15:0] led,
-    output reg [6:0] seg, output reg [3:0] an
+    output reg [6:0] seg, output reg [3:0] an=0
     );
     
     // 20kHz clock
@@ -74,7 +74,8 @@ module test_dtmf(
      *  Goertzel Filter
      */
      
-    wire [7:0] dtmf_led;
+    wire [15:0] dtmf_led;
+    wire [6:0] dtmf_seg;
     wire [15:0] dtmf_oled_data;
     goertzel_wrapper(
         .CLK(CLK),
@@ -84,13 +85,15 @@ module test_dtmf(
         .sw(sw[0]),
         .mic(mic_out),
         .pixel(pixel_index),
+        .seg(dtmf_seg),
         .oled_data(dtmf_oled_data),
         .led(dtmf_led)
         );
     
     always @(posedge CLK) begin
         oled_data <= dtmf_oled_data;
-        led[7:0] <= dtmf_led;
+        seg <= dtmf_seg;
+        led <= dtmf_led;
     end
     
 endmodule

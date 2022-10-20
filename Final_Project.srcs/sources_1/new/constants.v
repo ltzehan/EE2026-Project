@@ -62,6 +62,17 @@ localparam SEG_D       = 7'b0100001;
 localparam SEG_F       = 7'b0001110;
 localparam SEG_M       = 7'b0101010;
 localparam SEG_T       = 7'b0000111;
+localparam SEG_0       = 7'b1000000;
+localparam SEG_1       = 7'b1111001;
+localparam SEG_2       = 7'b0100100;
+localparam SEG_3       = 7'b0110000;
 localparam SEG_4       = 7'b0011001;
+localparam SEG_5       = 7'b0010010;
+localparam SEG_6       = 7'b0000010;
+localparam SEG_7       = 7'b1111000;
+localparam SEG_8       = 7'b0000000;
+localparam SEG_9       = 7'b0010000;
+localparam SEG_ASTR    = 7'b0111111;
+localparam SEG_HASH    = 7'b0001001;
 
 `endif // _constants_h_

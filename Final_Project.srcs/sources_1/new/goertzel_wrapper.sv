@@ -28,7 +28,8 @@ module goertzel_wrapper(
     input [11:0] mic,
     input [12:0] pixel,
     output reg [15:0] oled_data,
-    output reg [7:0] led=0
+    output reg [6:0] seg,
+    output reg [15:0] led
     );
     
     `include "constants.v"
@@ -38,7 +39,7 @@ module goertzel_wrapper(
      */
     
     parameter SIZE = 283;
-    localparam [7:0][7:0] BINS = {8'd10, 8'd11, 8'd12, 8'd13, 8'd17, 8'd19, 8'd21, 8'd23};
+    localparam [7:0][7:0] BINS = {8'd23, 8'd21, 8'd19, 8'd17, 8'd13, 8'd12, 8'd11, 8'd10}; 
     wire [31:0] y1 [7:0];
     wire [31:0] y2 [7:0];
     wire [31:0] power [7:0];
@@ -66,7 +67,7 @@ module goertzel_wrapper(
     // Scale power to bar height
     localparam MAX_POWER = 32'h300_0000;
     // Empirically determined
-    localparam [7:0][7:0] POWER_SCALE = {8'd16, 8'd17, 8'd18, 8'd18, 8'd19, 8'd19, 8'd19, 8'd19};
+    localparam [7:0][7:0] POWER_SCALE = {8'd19, 8'd19, 8'd19, 8'd19, 8'd18, 8'd18, 8'd17, 8'd16};
     reg [5:0] power_height [7:0];  // [0, 63]
     // Will only be zero if pixel is not part of any bars 
     reg [7:0] spectra_active;
@@ -127,6 +128,7 @@ module goertzel_wrapper(
      *  Tone Classification
      */
     
+    // Peak finding
     localparam THRESHOLD = 32'hFFFF;
     reg [3:0] i;
     reg [2:0] row_idx;
@@ -136,6 +138,15 @@ module goertzel_wrapper(
     reg [31:0] col_max_val;
     reg col_valid = 0;
     
+    // 7-segment
+    reg [15:0] idx;
+    localparam [6:0] dtmf_seg [0:15] = {
+                                        SEG_1, SEG_2, SEG_3, SEG_A,
+                                        SEG_4, SEG_5, SEG_6, SEG_B,
+                                        SEG_7, SEG_8, SEG_9, SEG_C,
+                                        SEG_ASTR, SEG_0, SEG_HASH, SEG_D
+                                       };
+    
     always @(posedge mic_clk) begin
         // Peak detector
         if (ctr == SIZE) begin
@@ -143,6 +154,7 @@ module goertzel_wrapper(
             row_valid = 0;
             col_max_val = THRESHOLD;
             col_valid = 0;
+
             // Find row peak
             for (i = 0; i <= 3; i = i+1) begin
                 if (power[i] > row_max_val) begin
@@ -160,9 +172,9 @@ module goertzel_wrapper(
                 end           
             end
             
-            if (row_valid & col_valid) begin
-                led[row_idx] <= 1;
-                led[col_idx+4] <= 1;
+            if (row_valid && col_valid) begin
+                led[(row_idx * 4) + col_idx] <= 1;
+                seg <= dtmf_seg[(row_idx * 4) + col_idx];
             end
         end
         
@@ -170,7 +182,10 @@ module goertzel_wrapper(
         if (ctr == 0) begin
             row_valid <= 0;
             col_valid <= 0;
+            led <= 0;
+            seg <= SEG_BLANK;
         end
+
     end
     
 endmodule

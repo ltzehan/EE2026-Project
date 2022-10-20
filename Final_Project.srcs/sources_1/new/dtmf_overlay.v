@@ -28,122 +28,119 @@ module dtmf_overlay(
     
     always @(posedge CLK) begin
         if (
+            (pixel == 13'd291) ||
             (pixel == 13'd292) ||
-            (pixel == 13'd294) ||
-            (pixel == 13'd295) ||
-            (pixel == 13'd303) ||
             (pixel == 13'd304) ||
-            (pixel == 13'd315) ||
-            (pixel == 13'd318) ||
-            (pixel == 13'd319) ||
-            (pixel == 13'd328) ||
-            (pixel == 13'd329) ||
-            (pixel == 13'd330) ||
-            (pixel == 13'd331) ||
-            (pixel == 13'd344) ||
-            (pixel == 13'd352) ||
+            (pixel == 13'd305) ||
+            (pixel == 13'd306) ||
+            (pixel == 13'd307) ||
+            (pixel == 13'd316) ||
+            (pixel == 13'd317) ||
+            (pixel == 13'd320) ||
+            (pixel == 13'd332) ||
+            (pixel == 13'd340) ||
+            (pixel == 13'd341) ||
+            (pixel == 13'd342) ||
+            (pixel == 13'd343) ||
+            (pixel == 13'd350) ||
             (pixel == 13'd353) ||
-            (pixel == 13'd356) ||
+            (pixel == 13'd354) ||
+            (pixel == 13'd363) ||
             (pixel == 13'd364) ||
-            (pixel == 13'd365) ||
-            (pixel == 13'd366) ||
-            (pixel == 13'd367) ||
-            (pixel == 13'd375) ||
-            (pixel == 13'd376) ||
             (pixel == 13'd387) ||
             (pixel == 13'd389) ||
-            (pixel == 13'd392) ||
+            (pixel == 13'd390) ||
             (pixel == 13'd399) ||
-            (pixel == 13'd401) ||
-            (pixel == 13'd402) ||
+            (pixel == 13'd404) ||
             (pixel == 13'd411) ||
-            (pixel == 13'd413) ||
+            (pixel == 13'd414) ||
             (pixel == 13'd416) ||
             (pixel == 13'd423) ||
+            (pixel == 13'd424) ||
+            (pixel == 13'd425) ||
             (pixel == 13'd426) ||
+            (pixel == 13'd427) ||
             (pixel == 13'd428) ||
             (pixel == 13'd435) ||
-            (pixel == 13'd436) ||
-            (pixel == 13'd437) ||
             (pixel == 13'd438) ||
-            (pixel == 13'd439) ||
             (pixel == 13'd440) ||
-            (pixel == 13'd447) ||
-            (pixel == 13'd450) ||
-            (pixel == 13'd452) ||
+            (pixel == 13'd446) ||
+            (pixel == 13'd448) ||
+            (pixel == 13'd451) ||
             (pixel == 13'd459) ||
-            (pixel == 13'd464) ||
-            (pixel == 13'd471) ||
-            (pixel == 13'd473) ||
+            (pixel == 13'd461) ||
+            (pixel == 13'd462) ||
+            (pixel == 13'd472) ||
             (pixel == 13'd474) ||
+            (pixel == 13'd475) ||
             (pixel == 13'd483) ||
-            (pixel == 13'd485) ||
+            (pixel == 13'd487) ||
             (pixel == 13'd488) ||
             (pixel == 13'd495) ||
-            (pixel == 13'd499) ||
             (pixel == 13'd500) ||
             (pixel == 13'd507) ||
-            (pixel == 13'd509) ||
+            (pixel == 13'd510) ||
             (pixel == 13'd512) ||
-            (pixel == 13'd519) ||
-            (pixel == 13'd522) ||
+            (pixel == 13'd520) ||
             (pixel == 13'd524) ||
-            (pixel == 13'd532) ||
+            (pixel == 13'd531) ||
+            (pixel == 13'd534) ||
             (pixel == 13'd536) ||
-            (pixel == 13'd543) ||
-            (pixel == 13'd546) ||
-            (pixel == 13'd548) ||
+            (pixel == 13'd542) ||
+            (pixel == 13'd544) ||
+            (pixel == 13'd547) ||
             (pixel == 13'd555) ||
+            (pixel == 13'd559) ||
             (pixel == 13'd560) ||
             (pixel == 13'd567) ||
-            (pixel == 13'd571) ||
+            (pixel == 13'd569) ||
             (pixel == 13'd572) ||
             (pixel == 13'd579) ||
-            (pixel == 13'd584) ||
-            (pixel == 13'd591) ||
+            (pixel == 13'd592) ||
+            (pixel == 13'd593) ||
+            (pixel == 13'd594) ||
+            (pixel == 13'd595) ||
             (pixel == 13'd604) ||
-            (pixel == 13'd605) ||
-            (pixel == 13'd606) ||
             (pixel == 13'd607) ||
-            (pixel == 13'd616) ||
-            (pixel == 13'd617) ||
+            (pixel == 13'd608) ||
+            (pixel == 13'd628) ||
+            (pixel == 13'd629) ||
+            (pixel == 13'd639) ||
             (pixel == 13'd640) ||
-            (pixel == 13'd643) ||
-            (pixel == 13'd644) ||
-            (pixel == 13'd652) ||
-            (pixel == 13'd653) ||
-            (pixel == 13'd654) ||
-            (pixel == 13'd655) ||
+            (pixel == 13'd641) ||
+            (pixel == 13'd642) ||
+            (pixel == 13'd651) ||
             (pixel == 13'd663) ||
+            (pixel == 13'd665) ||
+            (pixel == 13'd668) ||
+            (pixel == 13'd759) ||
+            (pixel == 13'd764) ||
             (pixel == 13'd772) ||
+            (pixel == 13'd773) ||
             (pixel == 13'd774) ||
             (pixel == 13'd775) ||
             (pixel == 13'd783) ||
             (pixel == 13'd784) ||
-            (pixel == 13'd796) ||
+            (pixel == 13'd795) ||
             (pixel == 13'd798) ||
             (pixel == 13'd799) ||
+            (pixel == 13'd807) ||
             (pixel == 13'd808) ||
             (pixel == 13'd809) ||
             (pixel == 13'd810) ||
             (pixel == 13'd811) ||
-            (pixel == 13'd819) ||
+            (pixel == 13'd812) ||
             (pixel == 13'd820) ||
             (pixel == 13'd821) ||
             (pixel == 13'd822) ||
             (pixel == 13'd823) ||
-            (pixel == 13'd824) ||
             (pixel == 13'd831) ||
+            (pixel == 13'd833) ||
             (pixel == 13'd834) ||
-            (pixel == 13'd835) ||
             (pixel == 13'd843) ||
             (pixel == 13'd844) ||
-            (pixel == 13'd856) ||
-            (pixel == 13'd857) ||
-            (pixel == 13'd858) ||
-            (pixel == 13'd859) ||
             (pixel == 13'd867) ||
-            (pixel == 13'd869) ||
+            (pixel == 13'd870) ||
             (pixel == 13'd872) ||
             (pixel == 13'd879) ||
             (pixel == 13'd881) ||
@@ -152,20 +149,20 @@ module dtmf_overlay(
             (pixel == 13'd893) ||
             (pixel == 13'd896) ||
             (pixel == 13'd903) ||
-            (pixel == 13'd908) ||
+            (pixel == 13'd906) ||
             (pixel == 13'd915) ||
-            (pixel == 13'd918) ||
-            (pixel == 13'd927) ||
-            (pixel == 13'd929) ||
-            (pixel == 13'd932) ||
+            (pixel == 13'd920) ||
+            (pixel == 13'd926) ||
+            (pixel == 13'd928) ||
+            (pixel == 13'd931) ||
             (pixel == 13'd939) ||
             (pixel == 13'd941) ||
             (pixel == 13'd942) ||
-            (pixel == 13'd951) ||
+            (pixel == 13'd952) ||
             (pixel == 13'd954) ||
-            (pixel == 13'd956) ||
+            (pixel == 13'd955) ||
             (pixel == 13'd963) ||
-            (pixel == 13'd965) ||
+            (pixel == 13'd966) ||
             (pixel == 13'd968) ||
             (pixel == 13'd975) ||
             (pixel == 13'd979) ||
@@ -173,70 +170,71 @@ module dtmf_overlay(
             (pixel == 13'd987) ||
             (pixel == 13'd989) ||
             (pixel == 13'd992) ||
-            (pixel == 13'd999) ||
-            (pixel == 13'd1004) ||
-            (pixel == 13'd1012) ||
-            (pixel == 13'd1014) ||
-            (pixel == 13'd1023) ||
-            (pixel == 13'd1025) ||
-            (pixel == 13'd1028) ||
+            (pixel == 13'd1000) ||
+            (pixel == 13'd1002) ||
+            (pixel == 13'd1011) ||
+            (pixel == 13'd1016) ||
+            (pixel == 13'd1022) ||
+            (pixel == 13'd1024) ||
+            (pixel == 13'd1027) ||
             (pixel == 13'd1035) ||
             (pixel == 13'd1039) ||
             (pixel == 13'd1040) ||
             (pixel == 13'd1047) ||
-            (pixel == 13'd1050) ||
+            (pixel == 13'd1049) ||
             (pixel == 13'd1052) ||
-            (pixel == 13'd1059) ||
-            (pixel == 13'd1064) ||
+            (pixel == 13'd1060) ||
+            (pixel == 13'd1061) ||
             (pixel == 13'd1071) ||
             (pixel == 13'd1083) ||
+            (pixel == 13'd1084) ||
+            (pixel == 13'd1085) ||
             (pixel == 13'd1088) ||
-            (pixel == 13'd1096) ||
             (pixel == 13'd1097) ||
             (pixel == 13'd1098) ||
-            (pixel == 13'd1099) ||
+            (pixel == 13'd1108) ||
             (pixel == 13'd1109) ||
             (pixel == 13'd1110) ||
-            (pixel == 13'd1119) ||
-            (pixel == 13'd1120) ||
-            (pixel == 13'd1121) ||
-            (pixel == 13'd1124) ||
+            (pixel == 13'd1111) ||
+            (pixel == 13'd1118) ||
+            (pixel == 13'd1123) ||
             (pixel == 13'd1131) ||
-            (pixel == 13'd1144) ||
+            (pixel == 13'd1143) ||
             (pixel == 13'd1145) ||
+            (pixel == 13'd1148) ||
+            (pixel == 13'd1239) ||
+            (pixel == 13'd1244) ||
             (pixel == 13'd1251) ||
             (pixel == 13'd1254) ||
             (pixel == 13'd1255) ||
             (pixel == 13'd1263) ||
             (pixel == 13'd1264) ||
-            (pixel == 13'd1265) ||
-            (pixel == 13'd1266) ||
-            (pixel == 13'd1267) ||
-            (pixel == 13'd1268) ||
+            (pixel == 13'd1275) ||
             (pixel == 13'd1276) ||
             (pixel == 13'd1278) ||
             (pixel == 13'd1279) ||
+            (pixel == 13'd1280) ||
             (pixel == 13'd1288) ||
             (pixel == 13'd1289) ||
-            (pixel == 13'd1292) ||
+            (pixel == 13'd1290) ||
+            (pixel == 13'd1291) ||
             (pixel == 13'd1300) ||
             (pixel == 13'd1301) ||
-            (pixel == 13'd1302) ||
-            (pixel == 13'd1303) ||
+            (pixel == 13'd1304) ||
             (pixel == 13'd1311) ||
-            (pixel == 13'd1312) ||
+            (pixel == 13'd1313) ||
             (pixel == 13'd1314) ||
-            (pixel == 13'd1315) ||
-            (pixel == 13'd1316) ||
             (pixel == 13'd1323) ||
             (pixel == 13'd1324) ||
-            (pixel == 13'd1335) ||
-            (pixel == 13'd1338) ||
-            (pixel == 13'd1339) ||
+            (pixel == 13'd1325) ||
+            (pixel == 13'd1326) ||
+            (pixel == 13'd1327) ||
+            (pixel == 13'd1328) ||
             (pixel == 13'd1347) ||
             (pixel == 13'd1349) ||
             (pixel == 13'd1352) ||
             (pixel == 13'd1359) ||
+            (pixel == 13'd1361) ||
             (pixel == 13'd1362) ||
             (pixel == 13'd1371) ||
             (pixel == 13'd1373) ||
@@ -247,20 +245,20 @@ module dtmf_overlay(
             (pixel == 13'd1395) ||
             (pixel == 13'd1398) ||
             (pixel == 13'd1400) ||
-            (pixel == 13'd1407) ||
-            (pixel == 13'd1409) ||
-            (pixel == 13'd1412) ||
+            (pixel == 13'd1406) ||
+            (pixel == 13'd1408) ||
+            (pixel == 13'd1411) ||
             (pixel == 13'd1419) ||
-            (pixel == 13'd1421) ||
             (pixel == 13'd1422) ||
             (pixel == 13'd1431) ||
-            (pixel == 13'd1433) ||
-            (pixel == 13'd1436) ||
+            (pixel == 13'd1434) ||
+            (pixel == 13'd1435) ||
             (pixel == 13'd1443) ||
             (pixel == 13'd1445) ||
             (pixel == 13'd1448) ||
-            (pixel == 13'd1456) ||
-            (pixel == 13'd1458) ||
+            (pixel == 13'd1455) ||
+            (pixel == 13'd1459) ||
+            (pixel == 13'd1460) ||
             (pixel == 13'd1467) ||
             (pixel == 13'd1469) ||
             (pixel == 13'd1472) ||
@@ -270,12 +268,11 @@ module dtmf_overlay(
             (pixel == 13'd1491) ||
             (pixel == 13'd1494) ||
             (pixel == 13'd1496) ||
-            (pixel == 13'd1503) ||
-            (pixel == 13'd1505) ||
-            (pixel == 13'd1508) ||
-            (pixel == 13'd1515) ||
-            (pixel == 13'd1519) ||
-            (pixel == 13'd1520) ||
+            (pixel == 13'd1502) ||
+            (pixel == 13'd1504) ||
+            (pixel == 13'd1507) ||
+            (pixel == 13'd1516) ||
+            (pixel == 13'd1518) ||
             (pixel == 13'd1527) ||
             (pixel == 13'd1529) ||
             (pixel == 13'd1532) ||
@@ -283,61 +280,64 @@ module dtmf_overlay(
             (pixel == 13'd1541) ||
             (pixel == 13'd1542) ||
             (pixel == 13'd1543) ||
-            (pixel == 13'd1553) ||
-            (pixel == 13'd1554) ||
+            (pixel == 13'd1551) ||
             (pixel == 13'd1563) ||
+            (pixel == 13'd1564) ||
+            (pixel == 13'd1566) ||
+            (pixel == 13'd1567) ||
             (pixel == 13'd1568) ||
             (pixel == 13'd1576) ||
-            (pixel == 13'd1579) ||
-            (pixel == 13'd1580) ||
+            (pixel == 13'd1577) ||
             (pixel == 13'd1588) ||
-            (pixel == 13'd1589) ||
-            (pixel == 13'd1599) ||
-            (pixel == 13'd1600) ||
-            (pixel == 13'd1602) ||
+            (pixel == 13'd1591) ||
+            (pixel == 13'd1592) ||
+            (pixel == 13'd1598) ||
             (pixel == 13'd1603) ||
-            (pixel == 13'd1604) ||
-            (pixel == 13'd1611) ||
-            (pixel == 13'd1624) ||
+            (pixel == 13'd1613) ||
+            (pixel == 13'd1614) ||
+            (pixel == 13'd1623) ||
             (pixel == 13'd1625) ||
-            (pixel == 13'd1626) ||
-            (pixel == 13'd1627) ||
-            (pixel == 13'd1736) ||
-            (pixel == 13'd1748) ||
-            (pixel == 13'd1760) ||
-            (pixel == 13'd1772) ||
-            (pixel == 13'd1827) ||
-            (pixel == 13'd1828) ||
-            (pixel == 13'd1829) ||
-            (pixel == 13'd1830) ||
-            (pixel == 13'd1831) ||
-            (pixel == 13'd1832) ||
-            (pixel == 13'd1839) ||
-            (pixel == 13'd1840) ||
-            (pixel == 13'd1841) ||
-            (pixel == 13'd1842) ||
-            (pixel == 13'd1843) ||
-            (pixel == 13'd1844) ||
-            (pixel == 13'd1851) ||
-            (pixel == 13'd1852) ||
-            (pixel == 13'd1853) ||
-            (pixel == 13'd1854) ||
-            (pixel == 13'd1855) ||
-            (pixel == 13'd1856) ||
-            (pixel == 13'd1863) ||
-            (pixel == 13'd1864) ||
-            (pixel == 13'd1865) ||
-            (pixel == 13'd1866) ||
-            (pixel == 13'd1867) ||
-            (pixel == 13'd1868) ||
-            (pixel == 13'd1924) ||
-            (pixel == 13'd1928) ||
-            (pixel == 13'd1936) ||
-            (pixel == 13'd1940) ||
-            (pixel == 13'd1948) ||
-            (pixel == 13'd1952) ||
-            (pixel == 13'd1960) ||
-            (pixel == 13'd1964)
+            (pixel == 13'd1628) ||
+            (pixel == 13'd1720) ||
+            (pixel == 13'd1721) ||
+            (pixel == 13'd1722) ||
+            (pixel == 13'd1723) ||
+            (pixel == 13'd1784) ||
+            (pixel == 13'd1795) ||
+            (pixel == 13'd1808) ||
+            (pixel == 13'd1875) ||
+            (pixel == 13'd1876) ||
+            (pixel == 13'd1877) ||
+            (pixel == 13'd1878) ||
+            (pixel == 13'd1879) ||
+            (pixel == 13'd1880) ||
+            (pixel == 13'd1886) ||
+            (pixel == 13'd1887) ||
+            (pixel == 13'd1888) ||
+            (pixel == 13'd1889) ||
+            (pixel == 13'd1890) ||
+            (pixel == 13'd1891) ||
+            (pixel == 13'd1899) ||
+            (pixel == 13'd1900) ||
+            (pixel == 13'd1901) ||
+            (pixel == 13'd1902) ||
+            (pixel == 13'd1903) ||
+            (pixel == 13'd1904) ||
+            (pixel == 13'd1916) ||
+            (pixel == 13'd1972) ||
+            (pixel == 13'd1976) ||
+            (pixel == 13'd1983) ||
+            (pixel == 13'd1987) ||
+            (pixel == 13'd1996) ||
+            (pixel == 13'd2000) ||
+            (pixel == 13'd2007) ||
+            (pixel == 13'd2008) ||
+            (pixel == 13'd2009) ||
+            (pixel == 13'd2010) ||
+            (pixel == 13'd2011) ||
+            (pixel == 13'd2012) ||
+            (pixel == 13'd2104) ||
+            (pixel == 13'd2108)
         )
             active <= 1;
         else
