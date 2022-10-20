@@ -5,7 +5,7 @@
 // 
 // Create Date: 18.10.2022 21:41:10
 // Design Name: 
-// Module Name: goertzel_wrapper
+// Module Name: dtmf
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module goertzel_wrapper(
+module dtmf(
     input CLK,
     input mic_clk,
     input btnL, input btnR,

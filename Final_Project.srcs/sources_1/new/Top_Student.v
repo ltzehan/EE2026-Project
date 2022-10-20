@@ -84,7 +84,7 @@ module Top_Student(
     wire [6:0] dtmf_seg;
     wire [15:0] dtmf_led;
     wire [15:0] dtmf_oled_data;
-    goertzel_wrapper(
+    dtmf dtmf(
         .CLK(CLK),
         .mic_clk(clk20k),
         .btnL(d_btnL),
