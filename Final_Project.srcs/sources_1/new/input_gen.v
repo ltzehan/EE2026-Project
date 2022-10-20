@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 16.10.2022 13:49:36
+// Create Date: 18.10.2022 12:50:44
 // Design Name: 
-// Module Name: sine_gen
+// Module Name: input_gen
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,22 +20,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module sine_gen(
+module input_gen(
     input CLK,
     output reg [11:0] out=0
     );
     
-    // SIZE = 100 MHz / Req. Freq.
     parameter SIZE = 1024;
     
-    reg [11:0] sine_mem [SIZE-1:0];
+    reg [11:0] input_mem [SIZE-1:0];
     initial
-        $readmemh("sine_4khz.mem", sine_mem);
+        $readmemh("input.mem", input_mem);
         
     reg [31:0] i = 0;
     always @(posedge CLK) begin
-        out <= sine_mem[i];
-        i <= (i == SIZE) ? 0 : i+1; 
+        out <= input_mem[i];
+        i <= (i == SIZE-1) ? 0 : i+1; 
     end
     
 endmodule

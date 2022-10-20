@@ -14,7 +14,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module Top_Student (
+
+module Top_Student(
     input CLK,
     input [1:0] sw,
     input btnU, input btnL, input btnR, input btnD, input btnC, 
@@ -23,6 +24,8 @@ module Top_Student (
     output reg [15:0] led,
     output reg [6:0] seg, output reg [3:0] an
     );
+
+    `include "constants.v"
 
     // 20kHz clock
     wire clk20k;
@@ -75,6 +78,26 @@ module Top_Student (
         );
 
     /**
+     *  Goertzel Filter
+     */
+     
+    wire [6:0] dtmf_seg;
+    wire [15:0] dtmf_led;
+    wire [15:0] dtmf_oled_data;
+    dtmf dtmf(
+        .CLK(CLK),
+        .mic_clk(clk20k),
+        .btnL(d_btnL),
+        .btnR(d_btnR),
+        .sw(sw[0]),
+        .mic(mic_out),
+        .pixel(pixel_index),
+        .oled_data(dtmf_oled_data),
+        .seg(dtmf_seg),
+        .led(dtmf_led)
+        );
+
+    /**
      *  Logic
      */
 
@@ -82,6 +105,7 @@ module Top_Student (
     // 1: OLED Task A (4.2A)
     // 2: OLED Task B (4.2B)
     // 3: AVI Task (4.2C)
+    // 4: DTMF
     wire [3:0] menu_sel_state;
     wire [3:0] task_state;
     menu(
@@ -135,6 +159,13 @@ module Top_Student (
                 char2 <= SEG_4;
                 char3 <= SEG_C;
             end
+            MENU_DTMF: begin
+                char0 <= SEG_D;
+                char1 <= SEG_T;
+                char2 <= SEG_M;
+                char3 <= SEG_F;
+            end
+            
         endcase
     end
 
@@ -154,6 +185,12 @@ module Top_Student (
         end
         else if (task_state == MENU_AVI) begin
             led[4:0] <= task_4c_led;
+        end
+        else if (task_state == MENU_DTMF) begin
+            oled_data <= dtmf_oled_data;
+            led[15:0] <= dtmf_led;
+            seg <= dtmf_seg;
+            an <= 0; 
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;

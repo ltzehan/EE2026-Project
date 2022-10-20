@@ -19,15 +19,16 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-parameter OLED_W = 96;
-parameter OLED_H = 64;
 
 module xy_to_px(
     input [7:0] x,
     input [7:0] y,
     output [12:0] px
     );
-    
+
+    localparam OLED_W = 96;
+    localparam OLED_H = 64;
+        
     assign px = (y * OLED_W) + x;
     
 endmodule
@@ -38,9 +39,28 @@ module px_to_xy(
     output [7:0] y
     );
 
+    localparam OLED_W = 96;
+    localparam OLED_H = 64;
+
     assign x = px % OLED_W;
     assign y = px / OLED_W;
 
+endmodule
+
+module draw_filled_box(
+    input [12:0] pixel,
+    input [7:0] x1,
+    input [7:0] y1,
+    input [7:0] x2,
+    input [7:0] y2,
+    output active
+    );
+    
+    wire [7:0] px, py;
+    px_to_xy calc(pixel, px, py);
+    
+    assign active = (py >= y1) && (py <= y2) && (px >= x1) && (px <= x2); 
+    
 endmodule
 
 module draw_box(
@@ -54,7 +74,7 @@ module draw_box(
     );
     
     wire [7:0] px, py;
-    px_to_xy(pixel, px, py);
+    px_to_xy calc(pixel, px, py);
     
     wire h1 = (py - y1 < th) && (px >= x1 && px <= x2);
     wire h2 = (y2 - py < th) && (px >= x1 && px <= x2);

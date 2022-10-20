@@ -19,11 +19,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-parameter SEG_BLANK = 7'b1111111;
-parameter SEG_A = 7'b0001000;
-parameter SEG_B = 7'b0000011;
-parameter SEG_C = 7'b0100111;
-parameter SEG_4 = 7'b0011001;
 
 module segment_map(
     input CLK,

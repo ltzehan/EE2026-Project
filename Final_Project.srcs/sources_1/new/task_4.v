@@ -29,7 +29,7 @@ module task_4(
     output reg [4:0] task_4c_led,
     output reg [15:0] oled_data
     );
-    
+        
     // 20kHz clock
     wire clk20k;
     fclk #(.khz(20)) clk_20khz(CLK, clk20k);
@@ -78,17 +78,17 @@ module task_4(
     // Draw borders
     always @(posedge clk25m) begin
        if (border_red)
-           oled_data <= {{5{1'b1}}, {11{1'b0}}};
+           oled_data <= OLED_RED;
        else if (border_orange)
-           oled_data <= {{5{1'b1}}, 6'b101001, {5{1'b0}}};
+           oled_data <= OLED_ORANGE;
        else if (border_green_1 && state >= 1)
-           oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+           oled_data <= OLED_GREEN;
        else if (border_green_2 && state >= 2)
-           oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+           oled_data <= OLED_GREEN;
        else if (border_green_3 && state >= 3)
-           oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+           oled_data <= OLED_GREEN;
        else if (border_green_4 && state == 4)
-           oled_data <= {{5{1'b0}}, {6{1'b1}}, {5{1'b0}}};
+           oled_data <= OLED_GREEN;
        else
            oled_data <= 16'b0;
     end

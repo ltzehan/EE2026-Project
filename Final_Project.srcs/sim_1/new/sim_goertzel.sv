@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 15.10.2022 18:26:01
+// Create Date: 18.10.2022 14:46:32
 // Design Name: 
 // Module Name: sim_goertzel
 // Project Name: 
@@ -22,23 +22,30 @@
 
 module sim_goertzel(
     );
-        
+    
+    localparam SIZE = 283;
+
     // 100MHz clock
     reg CLK = 0;
     always begin
         #5 CLK <= ~CLK;
     end
     
-    // Sine wave generator
-    wire [11:0] sine_4khz;
-    sine_gen #(.SIZE(25000)) sine_4khz_gen(CLK, sine_4khz); 
-    
-    reg RST = 0;
-    wire [11:0] mic = 0;
-    wire [60:0] y1;
-    wire [60:0] y2;
-    
-    assign mic = sine_4khz;
-    goertzel goertzel(CLK, RST, sine_4khz, y1, y2); 
+    // Input waveform
+    wire [11:0] mic;
+    wire mic_clk;
+    fclk #(.khz(20)) fclk (CLK, mic_clk);
+    input_gen #(.SIZE(SIZE)) input_gen (mic_clk, mic);
+
+    wire [12:0] pixel_index;
+    wire [7:0] dtmf_led;
+    wire [15:0] dtmf_oled_data;
+    goertzel_wrapper dtmf(
+        .mic_clk(mic_clk),
+        .mic(mic),
+        .pixel(pixel_index),
+        .oled_data(dtmf_oled_data),
+        .led(dtmf_led)
+        );
     
 endmodule
