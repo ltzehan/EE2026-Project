@@ -27,9 +27,18 @@ module debouncer(
     output out
     );
     
+    // 2 MHz
+    localparam M = 9;
+    
+    // Don't use fclk here since DFFs should only be enabled for a single clock cycle
+    reg [31:0] ctr = 0;
+    always @(posedge CLK) begin
+        ctr <= (ctr == M) ? 0 : ctr+1;
+    end
+    
     wire en;
-    fclk #(.khz(2)) clk_0p8khz(CLK, en);
-                  
+    assign en = (ctr == M);
+                      
     wire q0, q1, q2;
     dff dff1(CLK, en, in, q0);
     dff dff2(CLK, en, q0, q1);
