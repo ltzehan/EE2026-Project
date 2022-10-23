@@ -32,7 +32,7 @@ module menu(
     always @(posedge CLK) begin
         if (state == MENU_INACTIVE) begin
             if (btnC) begin
-                state <= MENU_OLED_A;
+                state <= task_state;
                 task_state <= MENU_INACTIVE; 
             end
         end
