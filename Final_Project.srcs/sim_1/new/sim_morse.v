@@ -19,10 +19,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-`define DOT e_btnC <= 1; #10;
-`define DASH e_btnC <= 1; #30;
-`define SPACE e_btnC <= 0; #10;
-`define WORD e_btnC <= 0; #70;
+`define DOT e_btnC <= 1; #1_000_000;
+`define DASH e_btnC <= 1; #3_000_000;
+`define SPACE e_btnC <= 0; #1_000_000;
+`define WORD e_btnC <= 0; #7_000_000;
 
 module sim_morse(
     );
@@ -33,8 +33,50 @@ module sim_morse(
         #5 CLK <= ~CLK;
     end
     
+    // 20kHz clock
+    wire sample_clk;
+    fclk #(.khz(0.005)) fclk(CLK, sample_clk);
+    
+    reg pb_1;
+    wire d_pb_1, dh_pb_1;
+    debouncer db(CLK, pb_1, d_pb_1);
+    debouncer_hold dbh(CLK, pb_1, dh_pb_1);
+    
     reg e_btnC = 0;
     initial begin
+      pb_1 = 0;
+        #10;
+        pb_1=1;
+        #20;
+        pb_1 = 0;
+        #10;
+        pb_1=1;
+        #30; 
+        pb_1 = 0;
+        #10;
+        pb_1=1;
+        #40;
+        pb_1 = 0;
+        #10;
+        pb_1=1;
+        #30; 
+        pb_1 = 0;
+        #10;
+        pb_1=1; 
+        #1000; 
+        pb_1 = 0;
+        #10;
+        pb_1=1;
+        #20;
+        pb_1 = 0;
+        #10;
+        pb_1=1;
+        #30; 
+        pb_1 = 0;
+        #10;
+        pb_1=1;
+        #40;
+        pb_1 = 0; 
         #5;
         `DOT`SPACE`DASH
         `WORD
@@ -46,6 +88,7 @@ module sim_morse(
     wire [5:0] symbol;
     morse morse(
         .CLK(CLK),
+        .sample_clk(sample_clk),
         .in(e_btnC),
         .valid(valid),
         .symbol(symbol)

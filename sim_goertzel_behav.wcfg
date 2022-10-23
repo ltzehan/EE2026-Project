@@ -12,54 +12,52 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="318000001fs"></ZoomEndTime>
-      <Cursor1Time time="224000000fs"></Cursor1Time>
+      <ZoomEndTime time="1218000001fs"></ZoomEndTime>
+      <Cursor1Time time="150000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="151"></NameColumnWidth>
+      <NameColumnWidth column_width="119"></NameColumnWidth>
       <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="9" />
-   <wave_markers>
-      <marker time="6018870922000" label="" />
-   </wave_markers>
+   <WVObjectSize size="10" />
    <wvobject fp_name="/sim_morse/morse/CLK" type="logic">
       <obj_property name="ElementShortName">CLK</obj_property>
       <obj_property name="ObjectShortName">CLK</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/morse/in" type="logic">
+   <wvobject fp_name="/sim_morse/db/CLK" type="logic">
+      <obj_property name="ElementShortName">CLK</obj_property>
+      <obj_property name="ObjectShortName">CLK</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_morse/db/in" type="logic">
       <obj_property name="ElementShortName">in</obj_property>
       <obj_property name="ObjectShortName">in</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/morse/prev" type="logic">
-      <obj_property name="ElementShortName">prev</obj_property>
-      <obj_property name="ObjectShortName">prev</obj_property>
+   <wvobject fp_name="/sim_morse/db/out" type="logic">
+      <obj_property name="ElementShortName">out</obj_property>
+      <obj_property name="ObjectShortName">out</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/morse/symbol" type="array">
-      <obj_property name="ElementShortName">symbol[5:0]</obj_property>
-      <obj_property name="ObjectShortName">symbol[5:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/sim_morse/db/ctr" type="array">
+      <obj_property name="ElementShortName">ctr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ctr[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/morse/recv" type="array">
-      <obj_property name="ElementShortName">recv[0:4][1:0]</obj_property>
-      <obj_property name="ObjectShortName">recv[0:4][1:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+   <wvobject fp_name="/sim_morse/db/en" type="logic">
+      <obj_property name="ElementShortName">en</obj_property>
+      <obj_property name="ObjectShortName">en</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/morse/idx" type="array">
-      <obj_property name="ElementShortName">idx[2:0]</obj_property>
-      <obj_property name="ObjectShortName">idx[2:0]</obj_property>
+   <wvobject fp_name="/sim_morse/db/q0" type="logic">
+      <obj_property name="ElementShortName">q0</obj_property>
+      <obj_property name="ObjectShortName">q0</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/morse/ctr" type="array">
-      <obj_property name="ElementShortName">ctr[4:0]</obj_property>
-      <obj_property name="ObjectShortName">ctr[4:0]</obj_property>
+   <wvobject fp_name="/sim_morse/db/q1" type="logic">
+      <obj_property name="ElementShortName">q1</obj_property>
+      <obj_property name="ObjectShortName">q1</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/valid" type="logic">
-      <obj_property name="ElementShortName">valid</obj_property>
-      <obj_property name="ObjectShortName">valid</obj_property>
+   <wvobject fp_name="/sim_morse/db/q2" type="logic">
+      <obj_property name="ElementShortName">q2</obj_property>
+      <obj_property name="ObjectShortName">q2</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_morse/symbol" type="array">
-      <obj_property name="ElementShortName">symbol[5:0]</obj_property>
-      <obj_property name="ObjectShortName">symbol[5:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/sim_morse/db/M" type="array">
+      <obj_property name="ElementShortName">M[31:0]</obj_property>
+      <obj_property name="ObjectShortName">M[31:0]</obj_property>
    </wvobject>
 </wave_config>

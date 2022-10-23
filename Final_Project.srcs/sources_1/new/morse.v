@@ -22,9 +22,11 @@
 
 module morse(
     input CLK,
+    input sample_clk,
     input in,
     output reg valid=0,
-    output reg [5:0] symbol=5'bx
+    output reg [5:0] symbol=6'bx,
+    output reg [15:0] led
     );
     
     /**
@@ -35,51 +37,40 @@ module morse(
     // Intra-char:  1 unit
     // Inter-char:  3 units
     // Word space:  7 units
-    
-    wire sample_clk;
-    assign sample_clk = CLK;
-//    fclk #(.khz(0.005)) clk_5hz(CLK, sample_clk);
-    
+        
     // 0b00: no value, 0b01: dot; 0b10: dash
     localparam X = 2'b00;
-    localparam DOT = 2'b01;
-    localparam DASH = 2'b10;
+    localparam DOT = 2'b10;
+    localparam DASH = 2'b11;
     reg [1:0] recv [0:4] = '{5{2'b0}};
+    wire [9:0] recv_packed = {>>{recv}}; 
+    
     reg [2:0] idx = 0;
     // Counter for cycles at current level 
-    reg [4:0] ctr = 0;
+    reg [15:0] ctr = 1;
     reg prev = 0;
     always @(posedge sample_clk) begin
+        valid <= 0;
+
         // Increase counter if no change in signal
         prev <= in;
         if (prev == in)
-            ctr <= (ctr == 32) ? 32 : ctr+1;
+            ctr <= (ctr == 2**15) ? 2**15 : ctr+1;
         else
             ctr <= 1;
         
-        valid <= 0;
-        
-        // Rising edge of input
-//        if (in & !prev) begin
-//            idx <= 0;
-        
-//            // Next word (effectively space character)
-//            if (ctr+1 >= 7) begin
-//                valid <= 1;
-//                symbol <= 1;
-//            end
-//        end
-        
         // Falling edge of input
-        if (!in & prev) begin
-            recv[idx] <= (ctr >= 3) ? DASH : DOT; 
+        if (!in && prev) begin
+            recv[idx] <= (ctr >= 3) ? DASH : DOT;
+//            led[1:0] <= (ctr >= 3) ? DASH : DOT;
             idx <= idx + 1;
         end
         
         // Start new character 
-        if (!prev && !in && ctr >= 3 && recv != {5{2'b0}}) begin
+        if (!prev && !in && ctr >= 3 && 
+            recv[0] != 0 && recv[1] != 0 && recv[2] != 0 && recv[3] != 0 && recv[4] != 0) begin
             valid <= 1;
-            recv <= '{5{2'b0}};
+            recv <= '{5{X}};
             idx <= 0;
         end
 
@@ -97,7 +88,7 @@ module morse(
     // 28:      =  31:      SPACE
     
     always @(posedge sample_clk) begin
-        case (recv)
+        case (recv_packed)
         {DOT, DASH, X, X, X}: // A = .-
             symbol <= 1;
         {DASH, DOT, DOT, DOT, X}: // B = -...
@@ -107,5 +98,17 @@ module morse(
             symbol <= 5'bx;
         endcase
     end
+    
+    /**
+     *  LEDs
+     */
+     
+     always @(posedge sample_clk) begin
+        led[15:14] <= recv[0];
+        led[12:11] <= recv[1];
+        led[9:8] <= recv[2];
+        led[6:5] <= recv[3];
+        led[3:2] <= recv[4];
+     end
     
 endmodule
