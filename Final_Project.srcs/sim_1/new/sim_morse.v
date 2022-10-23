@@ -40,7 +40,7 @@ module sim_morse(
     reg pb_1;
     wire d_pb_1, dh_pb_1;
     debouncer db(CLK, pb_1, d_pb_1);
-    debouncer_hold dbh(CLK, pb_1, dh_pb_1);
+    debouncer_hold #(.M(1_999)) dbh(CLK, pb_1, dh_pb_1);
     
     reg e_btnC = 0;
     initial begin
@@ -84,14 +84,14 @@ module sim_morse(
         `WORD
     end
     
-    wire valid;
-    wire [5:0] symbol;
-    morse morse(
-        .CLK(CLK),
-        .sample_clk(sample_clk),
-        .in(e_btnC),
-        .valid(valid),
-        .symbol(symbol)
-        );
+//    wire valid;
+//    wire [5:0] symbol;
+//    morse morse(
+//        .CLK(CLK),
+//        .sample_clk(sample_clk),
+//        .in(e_btnC),
+//        .valid(valid),
+//        .symbol(symbol)
+//        );
     
 endmodule

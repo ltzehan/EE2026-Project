@@ -29,6 +29,9 @@ module morse(
     output reg [15:0] led
     );
     
+    // Coutner scaling for time unit
+    localparam TIME_UNIT = 3000;
+    
     /**
      *  Morse timing (Farnsworth)
      */
@@ -61,14 +64,13 @@ module morse(
         
         // Falling edge of input
         if (!in && prev) begin
-            recv[idx] <= (ctr >= 3) ? DASH : DOT;
-//            led[1:0] <= (ctr >= 3) ? DASH : DOT;
+            recv[idx] <= (ctr >= 3*TIME_UNIT) ? DASH : DOT;
             idx <= idx + 1;
         end
         
         // Start new character 
-        if (!prev && !in && ctr >= 3 && 
-            recv[0] != 0 && recv[1] != 0 && recv[2] != 0 && recv[3] != 0 && recv[4] != 0) begin
+        if (!prev && !in && ctr >= (3*TIME_UNIT) && 
+            (recv[0] != 0 || recv[1] != 0 || recv[2] != 0 || recv[3] != 0 || recv[4] != 0)) begin
             valid <= 1;
             recv <= '{5{X}};
             idx <= 0;
@@ -109,6 +111,7 @@ module morse(
         led[9:8] <= recv[2];
         led[6:5] <= recv[3];
         led[3:2] <= recv[4];
+        led[0] <= in;
      end
     
 endmodule

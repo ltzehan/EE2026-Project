@@ -45,6 +45,9 @@ module Top_Student(
     debouncer(CLK, btnD, d_btnD);
     debouncer(CLK, btnC, d_btnC);
     
+    wire dh_btnU;
+    debouncer_hold #(.M(19_999)) (CLK, btnU, dh_btnU);
+    
     wire e_btnU, e_btnL, e_btnR, e_btnD, e_btnC; // rising edge
     edge_detector(CLK, d_btnU, e_btnU);
     edge_detector(CLK, d_btnL, e_btnL);
@@ -62,6 +65,10 @@ module Top_Student(
         .sample(mic_out)
         );
     
+    /**
+     *  OLED
+     */
+    
     reg [15:0] oled_data;
     wire frame_begin, sending_pixels, sample_pixel;
     wire [12:0] pixel_index;
@@ -78,7 +85,7 @@ module Top_Student(
         );
 
     /**
-     *  Goertzel Filter
+     *  DTMF
      */
      
     wire [6:0] dtmf_seg;
@@ -96,26 +103,26 @@ module Top_Student(
         .seg(dtmf_seg),
         .led(dtmf_led)
         );
-
+        
     /**
-     *  Logic
+     *  Morse Decoder
      */
 
-    // 0: Menu inactive
-    // 1: OLED Task A (4.2A)
-    // 2: OLED Task B (4.2B)
-    // 3: AVI Task (4.2C)
-    // 4: DTMF
-    wire [3:0] menu_sel_state;
-    wire [3:0] task_state;
-    menu(
+    wire morse_valid;
+    wire [5:0] morse_symbol;
+    wire [15:0] morse_led;
+    morse morse(
         .CLK(CLK),
-        .btnL(e_btnL),
-        .btnR(e_btnR),
-        .btnC(e_btnC),
-        .state(menu_sel_state),
-        .task_state(task_state)
+        .sample_clk(clk20k),
+        .in(dh_btnU),
+        .valid(morse_valid),
+        .symbol(morse_symbol),
+        .led(morse_led)
         );
+
+    /**
+     *  Tasks 4A-4C
+     */
     
     wire task_4a_led;
     wire [4:0] task_4c_led;
@@ -129,15 +136,21 @@ module Top_Student(
         .task_4c_led(task_4c_led),
         .oled_data(task_oled_data)
         );
-        
+    
     /**
-     *  Morse code
+     *  Menu Logic
      */
-    // TODO
-
-    /**
-     *  LEDs and 7-segments
-     */
+     
+     wire [3:0] menu_sel_state;
+     wire [3:0] task_state;
+     menu(
+         .CLK(CLK),
+         .btnL(e_btnL),
+         .btnR(e_btnR),
+         .btnC(e_btnC),
+         .state(menu_sel_state),
+         .task_state(task_state)
+         );
 
     reg [7:0] char0, char1, char2, char3;
     wire [6:0] menu_seg;
@@ -179,6 +192,10 @@ module Top_Student(
             
         endcase
     end
+    
+    /**
+     *  Output Switching
+     */
 
     always @(posedge CLK) begin
         // Default values
@@ -201,10 +218,10 @@ module Top_Student(
             oled_data <= dtmf_oled_data;
             led[15:0] <= dtmf_led;
             seg <= dtmf_seg;
-            an <= 0; 
+            an <= 4'b1110; 
         end
         else if (task_state == MENU_MORSE) begin
-            // TODO
+            led[15:0] <= morse_led;
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;
