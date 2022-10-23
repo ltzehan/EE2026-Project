@@ -87,8 +87,8 @@ module Top_Student(
     dtmf dtmf(
         .CLK(CLK),
         .mic_clk(clk20k),
-        .btnL(d_btnL),
-        .btnR(d_btnR),
+        .btnL(e_btnL),
+        .btnR(e_btnR),
         .sw(sw[0]),
         .mic(mic_out),
         .pixel(pixel_index),
@@ -110,9 +110,9 @@ module Top_Student(
     wire [3:0] task_state;
     menu(
         .CLK(CLK),
-        .btnL(d_btnL),
-        .btnR(d_btnR),
-        .btnC(d_btnC),
+        .btnL(e_btnL),
+        .btnR(e_btnR),
+        .btnC(e_btnC),
         .state(menu_sel_state),
         .task_state(task_state)
         );
@@ -122,7 +122,7 @@ module Top_Student(
     wire [15:0] task_oled_data;
     task_4(
         .CLK(CLK),
-        .btnU(d_btnU),
+        .btnU(e_btnU),
         .pixel_index(pixel_index),
         .mic_out(mic_out),
         .task_4a_led(task_4a_led),
