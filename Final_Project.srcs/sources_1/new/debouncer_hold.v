@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 08.10.2022 19:03:32
+// Create Date: 23.10.2022 13:21:33
 // Design Name: 
-// Module Name: debouncer
+// Module Name: debouncer_hold
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,8 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+// Differs from `debouncer` with output for press and hold; instead of a single pulse, output
+// will be high for as long as button is held down
+
 // Modified from https://www.fpga4student.com/2017/04/simple-debouncing-verilog-code-for.html
-module debouncer(
+module debouncer_hold(
     input CLK,
     input in,
     output out
@@ -44,6 +47,6 @@ module debouncer(
     dff dff2(CLK, en, q0, q1);
     dff dff3(CLK, en, q1, q2);
     
-    assign out = q1 & ~q2;
+    assign out = q2;
    
 endmodule

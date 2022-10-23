@@ -3,56 +3,61 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="sim_goertzel_behav.wdb" id="1">
+      <db_ref path="sim_morse_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="sim_goertzel" />
+            <top_module name="sim_morse" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="13852500000000fs"></ZoomStartTime>
-      <ZoomEndTime time="14509500000001fs"></ZoomEndTime>
-      <Cursor1Time time="14400000000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="1218000001fs"></ZoomEndTime>
+      <Cursor1Time time="150000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="169"></NameColumnWidth>
-      <ValueColumnWidth column_width="64"></ValueColumnWidth>
+      <NameColumnWidth column_width="119"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="7" />
-   <wave_markers>
-      <marker time="6018870922000" label="" />
-   </wave_markers>
-   <wvobject fp_name="/sim_goertzel/CLK" type="logic">
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/sim_morse/morse/CLK" type="logic">
       <obj_property name="ElementShortName">CLK</obj_property>
       <obj_property name="ObjectShortName">CLK</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/mic_clk" type="logic">
-      <obj_property name="ElementShortName">mic_clk</obj_property>
-      <obj_property name="ObjectShortName">mic_clk</obj_property>
+   <wvobject fp_name="/sim_morse/db/CLK" type="logic">
+      <obj_property name="ElementShortName">CLK</obj_property>
+      <obj_property name="ObjectShortName">CLK</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/mic" type="array">
-      <obj_property name="ElementShortName">mic[11:0]</obj_property>
-      <obj_property name="ObjectShortName">mic[11:0]</obj_property>
-      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject fp_name="/sim_morse/db/in" type="logic">
+      <obj_property name="ElementShortName">in</obj_property>
+      <obj_property name="ObjectShortName">in</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/dtmf_oled_data" type="array">
-      <obj_property name="ElementShortName">dtmf_oled_data[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dtmf_oled_data[15:0]</obj_property>
+   <wvobject fp_name="/sim_morse/db/out" type="logic">
+      <obj_property name="ElementShortName">out</obj_property>
+      <obj_property name="ObjectShortName">out</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/dtmf_led" type="array">
-      <obj_property name="ElementShortName">dtmf_led[7:0]</obj_property>
-      <obj_property name="ObjectShortName">dtmf_led[7:0]</obj_property>
+   <wvobject fp_name="/sim_morse/db/ctr" type="array">
+      <obj_property name="ElementShortName">ctr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ctr[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/dtmf/power" type="array">
-      <obj_property name="ElementShortName">power[7:0][31:0]</obj_property>
-      <obj_property name="ObjectShortName">power[7:0][31:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
+   <wvobject fp_name="/sim_morse/db/en" type="logic">
+      <obj_property name="ElementShortName">en</obj_property>
+      <obj_property name="ObjectShortName">en</obj_property>
    </wvobject>
-   <wvobject fp_name="/sim_goertzel/dtmf/power_height" type="array">
-      <obj_property name="ElementShortName">power_height[7:0][5:0]</obj_property>
-      <obj_property name="ObjectShortName">power_height[7:0][5:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
+   <wvobject fp_name="/sim_morse/db/q0" type="logic">
+      <obj_property name="ElementShortName">q0</obj_property>
+      <obj_property name="ObjectShortName">q0</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_morse/db/q1" type="logic">
+      <obj_property name="ElementShortName">q1</obj_property>
+      <obj_property name="ObjectShortName">q1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_morse/db/q2" type="logic">
+      <obj_property name="ElementShortName">q2</obj_property>
+      <obj_property name="ObjectShortName">q2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sim_morse/db/M" type="array">
+      <obj_property name="ElementShortName">M[31:0]</obj_property>
+      <obj_property name="ObjectShortName">M[31:0]</obj_property>
    </wvobject>
 </wave_config>
