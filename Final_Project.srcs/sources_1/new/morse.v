@@ -23,14 +23,40 @@
 module morse(
     input CLK,
     input sample_clk,
-    input in,
+    input in_btn,
+    input [11:0] in_mic,
+    input sw,
     output reg valid=0,
     output reg [5:0] symbol=6'bx,
     output reg [15:0] led
     );
     
     // Coutner scaling for time unit
-    localparam TIME_UNIT = 3000;
+    localparam TIME_UNIT = 3_000;
+    // Loudness of mic value to be considered as high input
+    localparam MIC_THRESHOLD = 2_500;
+    // Number of continuous low samples required for mic to be recognized as low
+    localparam MIC_LOW_COUNT = 2_000;
+    
+    reg [15:0] mic_low_ctr = 0;
+    reg in = 0;
+    always @(posedge sample_clk) begin
+        if (sw)
+            in <= in_btn;
+        else begin
+            if (in_mic >= MIC_THRESHOLD) begin
+                in <= 1;
+                mic_low_ctr <= 0;
+            end
+            else begin
+                // Only set mic input as low if consecutive samples are low
+                // otherwise just leave it as previous state
+                mic_low_ctr <= (mic_low_ctr == MIC_LOW_COUNT) ? 0 : mic_low_ctr + 1;
+                if (mic_low_ctr == MIC_LOW_COUNT)
+                    in <= 0;
+            end
+        end
+    end
     
     /**
      *  Morse timing (Farnsworth)
@@ -64,8 +90,15 @@ module morse(
         
         // Falling edge of input
         if (!in && prev) begin
-            recv[idx] <= (ctr >= 3*TIME_UNIT) ? DASH : DOT;
-            idx <= idx + 1;
+            // Check for at least half time unit to prevent false positives
+            if (ctr >= TIME_UNIT/2 && ctr < 3*TIME_UNIT) begin
+                recv[idx] <= DOT;
+                idx <= idx + 1;
+            end
+            else if (ctr >= 3*TIME_UNIT) begin
+                recv[idx] <= DASH;
+                idx <= idx + 1;
+            end            
         end
         
         // Start new character 

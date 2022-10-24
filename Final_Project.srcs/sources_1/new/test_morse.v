@@ -32,35 +32,36 @@ module test_morse(
     
     // 20kHz clock
     wire clk20k;
-    fclk #(.khz(0.005)) clk_20khz(CLK, clk20k);
+    fclk #(.khz(20)) clk_20khz(CLK, clk20k);
 
-//    wire [11:0] mic_out;
-//    Audio_Capture audio_capture(
-//        .CLK(CLK),
-//        .cs(clk20k),
-//        .MISO(J_MIC3_Pin3),
-//        .clk_samp(J_MIC3_Pin1),
-//        .sclk(J_MIC3_Pin4),
-//        .sample(mic_out)
-//        );
+    wire [11:0] mic_out;
+    Audio_Capture audio_capture(
+        .CLK(CLK),
+        .cs(clk20k),
+        .MISO(J_MIC3_Pin3),
+        .clk_samp(J_MIC3_Pin1),
+        .sclk(J_MIC3_Pin4),
+        .sample(mic_out)
+        );
    
-    wire dh_btnC; // debounced hold
-    debouncer_hold(CLK, btnC, dh_btnC);
+    wire dh_btnU;
+    debouncer_hold #(.M(14_999)) (CLK, btnU, dh_btnU);
     
+    wire morse_valid;
+    wire [5:0] morse_symbol;
     wire [15:0] morse_led;
-    wire valid;
-    wire [5:0] symbol;
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
-        .in(dh_btnC),
-        .valid(valid),
-        .symbol(symbol),
+        .in_btn(dh_btnU),
+        .in_mic(mic_out),
+        .sw(sw[0]),
+        .valid(morse_valid),
+        .symbol(morse_symbol),
         .led(morse_led)
         );
-        
+    
     always @(posedge CLK) begin
-        led[15:1] <= morse_led[15:1];
-        led[0] <= dh_btnC;
+        led <= morse_led;
     end
 endmodule

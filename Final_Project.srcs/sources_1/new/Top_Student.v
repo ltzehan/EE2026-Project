@@ -114,7 +114,9 @@ module Top_Student(
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
-        .in(dh_btnU),
+        .in_btn(dh_btnU),
+        .in_mic(mic_out),
+        .sw(sw[0]),
         .valid(morse_valid),
         .symbol(morse_symbol),
         .led(morse_led)
@@ -221,7 +223,7 @@ module Top_Student(
             an <= 4'b1110; 
         end
         else if (task_state == MENU_MORSE) begin
-            led[15:0] <= morse_led;
+            led <= morse_led;
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;

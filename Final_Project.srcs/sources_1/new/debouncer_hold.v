@@ -30,7 +30,6 @@ module debouncer_hold(
     output out
     );
     
-    // 2 MHz
     parameter M = 9;
     
     // Don't use fclk here since DFFs should only be enabled for a single clock cycle
