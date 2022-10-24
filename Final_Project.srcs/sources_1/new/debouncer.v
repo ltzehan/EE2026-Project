@@ -27,8 +27,7 @@ module debouncer(
     output out
     );
     
-    // 2 MHz
-    parameter M = 9;
+    parameter M = 9_999;
     
     // Don't use fclk here since DFFs should only be enabled for a single clock cycle
     reg [31:0] ctr = 0;
