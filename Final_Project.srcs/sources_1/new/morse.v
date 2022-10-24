@@ -115,22 +115,84 @@ module morse(
      *  Morse classification
      */
     // 0 - 26:  Letters (A - Z)
-    // 10 - 19: Digits (0 - 9)
-    // 20:      ?  21:      !
-    // 22:      .  23:      ,
-    // 24:      ;  25:      + 
-    // 26:      -  27:      /
-    // 28:      =  31:      SPACE
-    
+    // 30 - 39: Digits (0 - 9)
+
     always @(posedge sample_clk) begin
         case (recv_packed)
         {DOT, DASH, X, X, X}: // A = .-
             symbol <= 1;
         {DASH, DOT, DOT, DOT, X}: // B = -...
             symbol <= 2;
-        // TODO
+        {DASH, DOT, DASH, DOT, X}: // C = -.-. 
+            symbol <= 3;
+        {DASH, DOT, DOT, X, X}: // D = -.. 
+            symbol <= 4;
+        {DOT, X, X, X, X}: // E = .
+            symbol <= 5;
+        {DOT, DOT, DASH, DOT, X}: // F = ..-.
+            symbol <= 6;
+        {DASH, DASH, DOT, X, X}: // G = --.
+            symbol <= 7;
+        {DOT, DOT, DOT, DOT, X}: // H = ....
+            symbol <= 8;
+        {DOT, DOT, X, X, X}: // I = ..
+            symbol <= 9;
+        {DOT, DASH, DASH, DASH, X}: // J = .---
+            symbol <= 10;
+        {DASH, DOT, DASH, X, X}: // K = -.-
+            symbol <= 11;
+        {DOT, DASH, DOT, DOT, X}: // L = .-..
+            symbol <= 12;
+        {DASH, DASH, X, X, X}: // M = --
+            symbol <= 13;
+        {DASH, DOT, X, X, X}: // N = -.
+            symbol <= 14;
+        {DASH, DASH, DASH, X, X}: // O = ---
+            symbol <= 15;
+        {DOT, DASH, DASH, DOT, X}: // P = .--.
+            symbol <= 16;
+        {DASH, DASH, DOT, DASH, X}: // Q = --.-
+            symbol <= 17;
+        {DOT, DASH, DOT, X, X}: // R = .-.
+            symbol <= 18;
+        {DOT, DOT, DOT, X, X}: // S = ...
+            symbol <= 19;
+        {DASH, X, X, X, X}: // T = -
+            symbol <= 20;
+        {DOT, DOT, DASH, X, X}: // U = ..-
+            symbol <= 21;
+        {DOT, DOT, DOT, DASH, X}: // V = ...-
+            symbol <= 22;
+        {DOT, DASH, DASH, X, X}: // W = .--
+            symbol <= 23;
+        {DASH, DOT, DOT, DASH, X}: // X = -..-
+            symbol <= 24;
+        {DASH, DOT, DASH, DASH, X}: // Y = -.--
+            symbol <= 25;
+        {DASH, DASH, DOT, DOT, X}: // Z = --..
+            symbol <= 26;
+        {DOT, DASH, DASH, DASH, DASH}: // 1 = .----
+            symbol <= 31;
+        {DOT, DOT, DASH, DASH, DASH}: // 2 = ..---
+            symbol <= 32;
+        {DOT, DOT, DOT, DASH, DASH}: // 3 = ...--
+            symbol <= 33;
+        {DOT, DOT, DOT, DOT, DASH}: // 4 = ....-
+            symbol <= 34;
+        {DOT, DOT, DOT, DOT, DOT}: // 5 = .....
+            symbol <= 35;
+        {DASH, DOT, DOT, DOT, DOT}: // 6 = -....
+            symbol <= 36;
+        {DASH, DASH, DOT, DOT, DOT}: // 7 = --...
+            symbol <= 37;
+        {DASH, DASH, DASH, DOT, DOT}: // 8 = ---..
+            symbol <= 38;
+        {DASH, DASH, DASH, DASH, DOT}: // 9 = ----.
+            symbol <= 39;
+        {DASH, DASH, DASH, DASH, DASH}: // 0 = -----
+            symbol <= 30;
         default:
-            symbol <= 5'bx;
+            symbol <= 6'bx;
         endcase
     end
     

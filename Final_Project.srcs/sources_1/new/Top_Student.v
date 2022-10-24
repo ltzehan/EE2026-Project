@@ -111,6 +111,8 @@ module Top_Student(
     wire morse_valid;
     wire [5:0] morse_symbol;
     wire [15:0] morse_led;
+    wire [6:0] morse_seg;
+    wire [3:0] morse_an;
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
@@ -120,6 +122,14 @@ module Top_Student(
         .valid(morse_valid),
         .symbol(morse_symbol),
         .led(morse_led)
+        );
+        
+    morse_segment morse_segment(
+        .CLK(CLK),
+        .valid(morse_valid),
+        .symbol(morse_symbol),
+        .seg(morse_seg),
+        .an(morse_an)
         );
 
     /**
@@ -224,6 +234,8 @@ module Top_Student(
         end
         else if (task_state == MENU_MORSE) begin
             led <= morse_led;
+            seg <= morse_seg;
+             an <= morse_an;
         end
         else if (task_state == MENU_INACTIVE) begin
              seg <= menu_seg;

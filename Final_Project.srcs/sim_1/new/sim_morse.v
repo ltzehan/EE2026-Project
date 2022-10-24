@@ -26,7 +26,7 @@
 
 module sim_morse(
     );
-    
+            
     // 100MHz clock
     reg CLK = 0;
     always begin
@@ -42,47 +42,23 @@ module sim_morse(
     debouncer db(CLK, pb_1, d_pb_1);
     debouncer_hold #(.M(1_999)) dbh(CLK, pb_1, dh_pb_1);
     
-    reg e_btnC = 0;
+    reg valid;
+    reg [5:0] symbol;
+    wire [6:0] seg;
+    wire [3:0] an;
+    
     initial begin
-      pb_1 = 0;
-        #10;
-        pb_1=1;
         #20;
-        pb_1 = 0;
-        #10;
-        pb_1=1;
-        #30; 
-        pb_1 = 0;
-        #10;
-        pb_1=1;
-        #40;
-        pb_1 = 0;
-        #10;
-        pb_1=1;
-        #30; 
-        pb_1 = 0;
-        #10;
-        pb_1=1; 
-        #1000; 
-        pb_1 = 0;
-        #10;
-        pb_1=1;
+        valid <= 1;
+        symbol <= 1;
         #20;
-        pb_1 = 0;
+        valid <= 0;
+        symbol <= 2;
         #10;
-        pb_1=1;
-        #30; 
-        pb_1 = 0;
-        #10;
-        pb_1=1;
-        #40;
-        pb_1 = 0; 
-        #5;
-        `DOT`SPACE`DASH
-        `WORD
-        `DASH`SPACE`DOT`SPACE`DOT`SPACE`DOT
-        `WORD
+        valid <= 1;
     end
+    
+    morse_segment m(CLK, valid, symbol, seg, an);
     
 //    wire valid;
 //    wire [5:0] symbol;
