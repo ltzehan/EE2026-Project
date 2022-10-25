@@ -23,13 +23,19 @@
 module task_4(
     input CLK,
     input btnU,
+    input btnD,
     input [12:0] pixel_index,
     input [11:0] mic_out,
-    output reg task_4a_led,
-    output reg [4:0] task_4c_led,
-    output reg [15:0] oled_data
+    output reg task_4a_led=0,
+    output reg task_4b_led=0,
+    output reg [4:0] task_4c_led=5'b0,
+    output reg [15:0] task_4a_oled_data,
+    output reg [15:0] task_4b_oled_data
     );
         
+    // 100Hz clock
+    wire clk100;
+    fclk #(.khz(0.1)) clk_100hz(CLK, clk100);
     // 20kHz clock
     wire clk20k;
     fclk #(.khz(20)) clk_20khz(CLK, clk20k);
@@ -78,20 +84,58 @@ module task_4(
     // Draw borders
     always @(posedge clk25m) begin
        if (border_red)
-           oled_data <= OLED_RED;
+           task_4a_oled_data <= OLED_RED;
        else if (border_orange)
-           oled_data <= OLED_ORANGE;
+           task_4a_oled_data <= OLED_ORANGE;
        else if (border_green_1 && state >= 1)
-           oled_data <= OLED_GREEN;
+           task_4a_oled_data <= OLED_GREEN;
        else if (border_green_2 && state >= 2)
-           oled_data <= OLED_GREEN;
+           task_4a_oled_data <= OLED_GREEN;
        else if (border_green_3 && state >= 3)
-           oled_data <= OLED_GREEN;
+           task_4a_oled_data <= OLED_GREEN;
        else if (border_green_4 && state == 4)
-           oled_data <= OLED_GREEN;
+           task_4a_oled_data <= OLED_GREEN;
        else
-           oled_data <= 16'b0;
+           task_4a_oled_data <= OLED_BLACK;
     end
+    
+    /**
+     *  Task 4.2B
+     */
+     
+     reg [1:0] step = 0;
+     reg [15:0] count_5sec = 0;
+     always @(posedge clk100) begin
+        if (task_4b_led == 0 && btnD == 1) begin
+            step <= (step == 3) ? 0 : step + 1;
+            task_4b_led <= 1;
+        end
+        if (task_4b_led == 1) begin
+            count_5sec <= count_5sec + 1;
+        end
+        if (count_5sec == 499) begin
+            task_4b_led <= 0;
+            count_5sec <= 0;
+        end
+     end
+    
+    wire [7:0] x;
+    wire [7:0] y;
+    px_to_xy(pixel_index, x, y);
+    always @ (posedge CLK) begin
+        if (x >= 43 && x < 53 && y >= 44 && y < 49)  
+            task_4b_oled_data <= OLED_RED;
+        else if (x >= 43 && x < 53 && y >= 36 && y < 41)
+            task_4b_oled_data <= OLED_ORANGE;
+        else if (x >= 43 && x < 53 && y >= 28 && y < 33 && step >= 1)
+            task_4b_oled_data <= OLED_GREEN;
+        else if (x >= 43 && x < 53 && y >= 20 && y < 25 && step >= 2)
+            task_4b_oled_data <= OLED_GREEN_50;
+        else if (x >= 43 && x < 53 && y >= 12 && y < 17 && step >= 3)
+            task_4b_oled_data <= OLED_GREEN_10;
+        else 
+            task_4b_oled_data <= OLED_BLACK;
+     end
     
     /**
      *  Task 4.2C
