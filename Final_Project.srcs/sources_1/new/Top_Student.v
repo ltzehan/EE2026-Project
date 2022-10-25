@@ -141,6 +141,8 @@ module Top_Student(
     wire [4:0] task_4c_led;
     wire [15:0] task_4a_oled_data;
     wire [15:0] task_4b_oled_data;
+    wire [15:0] task_4c_oled_data;
+    wire [6:0] task_4c_seg;
     task_4(
         .CLK(CLK),
         .btnU(e_btnU),
@@ -151,7 +153,9 @@ module Top_Student(
         .task_4b_led(task_4b_led),
         .task_4c_led(task_4c_led),
         .task_4a_oled_data(task_4a_oled_data),
-        .task_4b_oled_data(task_4b_oled_data)
+        .task_4b_oled_data(task_4b_oled_data),
+        .task_4c_oled_data(task_4c_oled_data),
+        .task_4c_seg(task_4c_seg)
         );
     
     /**
@@ -230,7 +234,10 @@ module Top_Student(
             led[12] <= task_4b_led;
         end
         else if (task_state == MENU_AVI) begin
+            oled_data <= task_4c_oled_data;
             led[4:0] <= task_4c_led;
+            seg <= task_4c_seg;
+            an <= 4'b1110;
         end
         else if (task_state == MENU_DTMF) begin
             oled_data <= dtmf_oled_data;

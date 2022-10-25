@@ -30,7 +30,9 @@ module task_4(
     output reg task_4b_led=0,
     output reg [4:0] task_4c_led=5'b0,
     output reg [15:0] task_4a_oled_data,
-    output reg [15:0] task_4b_oled_data
+    output reg [15:0] task_4b_oled_data,
+    output reg [15:0] task_4c_oled_data,
+    output reg [6:0] task_4c_seg
     );
         
     // 100Hz clock
@@ -103,6 +105,13 @@ module task_4(
      *  Task 4.2B
      */
      
+     wire box_1, box_2, box_3, box_4, box_5;
+     draw_filled_box(.pixel(pixel_index), .x1(43), .x2(52), .y1(44), .y2(48), .active(box_1));
+     draw_filled_box(.pixel(pixel_index), .x1(43), .x2(52), .y1(36), .y2(40), .active(box_2));
+     draw_filled_box(.pixel(pixel_index), .x1(43), .x2(52), .y1(28), .y2(32), .active(box_3));
+     draw_filled_box(.pixel(pixel_index), .x1(43), .x2(52), .y1(20), .y2(24), .active(box_4));
+     draw_filled_box(.pixel(pixel_index), .x1(43), .x2(52), .y1(12), .y2(16), .active(box_5));
+     
      reg [1:0] step = 0;
      reg [15:0] count_5sec = 0;
      always @(posedge clk100) begin
@@ -123,15 +132,15 @@ module task_4(
     wire [7:0] y;
     px_to_xy(pixel_index, x, y);
     always @ (posedge CLK) begin
-        if (x >= 43 && x < 53 && y >= 44 && y < 49)  
+        if (box_1)  
             task_4b_oled_data <= OLED_RED;
-        else if (x >= 43 && x < 53 && y >= 36 && y < 41)
+        else if (box_2)
             task_4b_oled_data <= OLED_ORANGE;
-        else if (x >= 43 && x < 53 && y >= 28 && y < 33 && step >= 1)
+        else if (box_3 && step >= 1)
             task_4b_oled_data <= OLED_GREEN;
-        else if (x >= 43 && x < 53 && y >= 20 && y < 25 && step >= 2)
+        else if (box_4 && step >= 2)
             task_4b_oled_data <= OLED_GREEN_50;
-        else if (x >= 43 && x < 53 && y >= 12 && y < 17 && step >= 3)
+        else if (box_5 && step >= 3)
             task_4b_oled_data <= OLED_GREEN_10;
         else 
             task_4b_oled_data <= OLED_BLACK;
@@ -144,6 +153,7 @@ module task_4(
     // Volume detection
     reg [15:0] mic_peak = 0;
     reg [15:0] mic_ctr = 0;
+    reg [2:0] mic_level = 0;
     always @(posedge clk20k) begin
         // 0.1s elapsed
         mic_ctr <= (mic_ctr == 1_999) ? 0 : mic_ctr + 1;
@@ -153,21 +163,67 @@ module task_4(
         // Audio level classifier
         // Follows roughly logarithmic scale based on human auditory perception
         if (mic_ctr == 1_999) begin
-            if (mic_peak < 2000)
+            if (mic_peak < 1500) begin
                 task_4c_led <= 5'b00000;
-            else if (mic_peak < 2650)
+                task_4c_seg <= SEG_0;
+                mic_level <= 0;
+            end
+            else if (mic_peak < 2500) begin
                 task_4c_led <= 5'b00001;
-            else if (mic_peak < 3170)
+                task_4c_seg <= SEG_1;
+                mic_level <= 1;
+            end
+            else if (mic_peak < 3170) begin
                 task_4c_led <= 5'b00011;
-            else if (mic_peak < 3560)
+                task_4c_seg <= SEG_2;
+                mic_level <= 2;
+            end
+            else if (mic_peak < 3560) begin
                 task_4c_led <= 5'b00111;
-            else if (mic_peak < 3820)
+                task_4c_seg <= SEG_3;
+                mic_level <= 3;
+            end
+            else if (mic_peak < 3820) begin
                 task_4c_led <= 5'b01111;
-            else
+                task_4c_seg <= SEG_4;
+                mic_level <= 4;
+            end
+            else begin
                 task_4c_led <= 5'b11111;
+                task_4c_seg <= SEG_5;
+                mic_level <= 5;
+            end
                 
             mic_ctr <= 0;
             mic_peak <= 0;
+        end
+    end
+    
+    always @(posedge CLK) begin
+        task_4c_oled_data <= OLED_BLACK;
+        if (mic_level >= 1) begin
+            if (box_1 || border_red) 
+                task_4c_oled_data <= OLED_RED;
+        end
+        if (mic_level >= 2) begin
+            if (box_2 || border_orange)
+                task_4c_oled_data <= OLED_ORANGE;
+        end
+        if (mic_level >= 3) begin
+            if (box_3 || border_green_1)
+                task_4c_oled_data <= OLED_GREEN;
+        end
+        if (mic_level >= 4) begin
+            if (box_4)
+                task_4c_oled_data <= OLED_GREEN_50;
+            else if (border_green_2)
+                task_4c_oled_data <= OLED_GREEN;
+        end
+        if (mic_level == 5) begin
+            if (box_5)
+                task_4c_oled_data <= OLED_GREEN_10;
+            else if (border_green_3)
+                task_4c_oled_data <= OLED_GREEN;
         end
     end
     
