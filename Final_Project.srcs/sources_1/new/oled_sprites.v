@@ -20,16 +20,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module oled_sprites(
+module oled_text_sprite(
     input CLK,
     input [12:0] pixel_index,
-    input [12:0] offset,
     input [5:0] symbol,
     output reg active
     );
     
+    parameter [12:0] OFFSET = 13'd0;
+    
     // Assume no overflow!
-    wire [12:0] pixel = pixel_index + offset;
+    wire [13:0] pixel = pixel_index - OFFSET;
     
     // I love hardcoding things
     always @(posedge CLK) begin
