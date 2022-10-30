@@ -20,6 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+`include "constants.vh"
+
 module dtmf(
     input CLK,
     input mic_clk,
@@ -31,9 +33,7 @@ module dtmf(
     output reg [6:0] seg,
     output reg [15:0] led
     );
-    
-    `include "constants.v"
-            
+
     /**
      *  Filter
      */
@@ -95,9 +95,9 @@ module dtmf(
             draw_filled_box dtmf_bar(
                 .pixel(pixel), 
                 .x1(p*MAX_BAR_W + bar_margin), 
-                .y1(OLED_H-power_height[p]), 
+                .y1(`OLED_H-power_height[p]), 
                 .x2((p+1)*MAX_BAR_W - bar_margin), 
-                .y2(OLED_H), 
+                .y2(`OLED_H), 
                 .active(spectra_active[p])
                 );
 
@@ -117,11 +117,11 @@ module dtmf(
     always @(posedge CLK) begin
         // Show frequency overlay
         if (sw && overlay_active)
-            oled_data <= OLED_WHITE;
+            oled_data <= `OLED_WHITE;
         else if (spectra_active)
-            oled_data <= OLED_RED;
+            oled_data <= `OLED_RED;
         else
-            oled_data <= OLED_BLACK;
+            oled_data <= `OLED_BLACK;
     end 
     
     /**
@@ -141,10 +141,10 @@ module dtmf(
     // 7-segment
     reg [15:0] idx;
     localparam [6:0] dtmf_seg [0:15] = {
-                                        SEG_1, SEG_2, SEG_3, SEG_A,
-                                        SEG_4, SEG_5, SEG_6, SEG_B,
-                                        SEG_7, SEG_8, SEG_9, SEG_C,
-                                        SEG_ASTR, SEG_0, SEG_HASH, SEG_D
+                                        `SEG_1, `SEG_2, `SEG_3, `SEG_A,
+                                        `SEG_4, `SEG_5, `SEG_6, `SEG_B,
+                                        `SEG_7, `SEG_8, `SEG_9, `SEG_C,
+                                        `SEG_ASTR, `SEG_0, `SEG_HASH, `SEG_D
                                        };
     reg [15:0] clear_ctr;
     
@@ -190,7 +190,7 @@ module dtmf(
         if (clear_ctr > 4000) begin
             clear_ctr <= 0;
             led <= 0;
-            seg <= SEG_BLANK;
+            seg <= `SEG_BLANK;
         end
     end
     

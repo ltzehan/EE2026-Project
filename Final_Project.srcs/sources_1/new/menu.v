@@ -20,32 +20,34 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+`include "constants.vh"
+
 module menu(
     input CLK,
     input btnL,
     input btnR,
     input btnC,
-    output reg [3:0] state = MENU_OLED_A,   // State used for 7-segment display
-    output reg [3:0] task_state = MENU_INACTIVE // State used for activating tasks
+    output reg [3:0] state = `MENU_OLED_A,   // State used for 7-segment display
+    output reg [3:0] task_state = `MENU_INACTIVE // State used for activating tasks
     );
         
     always @(posedge CLK) begin
-        if (state == MENU_INACTIVE) begin
+        if (state == `MENU_INACTIVE) begin
             if (btnC) begin
                 state <= task_state;
-                task_state <= MENU_INACTIVE; 
+                task_state <= `MENU_INACTIVE; 
             end
         end
         else begin
-            if (btnR && state != MENU_MORSE)
+            if (btnR && state != `MENU_MORSE)
                 state <= state + 1;
-            else if (btnL && state != MENU_OLED_A)
+            else if (btnL && state != `MENU_OLED_A)
                 state <= state - 1;
         end
         
         // Confirm task selection
-        if (task_state == MENU_INACTIVE && btnC) begin
-            state <= MENU_INACTIVE;
+        if (task_state == `MENU_INACTIVE && btnC) begin
+            state <= `MENU_INACTIVE;
             task_state <= state;
         end
     end

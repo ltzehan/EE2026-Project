@@ -15,6 +15,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+`include "constants.vh"
+
 module Top_Student(
     input CLK,
     input [1:0] sw,
@@ -24,8 +26,6 @@ module Top_Student(
     output reg [15:0] led,
     output reg [6:0] seg, output reg [3:0] an
     );
-
-    `include "constants.v"
 
     // 20kHz clock
     wire clk20k;
@@ -180,35 +180,35 @@ module Top_Student(
     
     always @(posedge CLK) begin
         case (menu_sel_state)
-            MENU_OLED_A: begin
-                char0 <= SEG_BLANK;
-                char1 <= SEG_BLANK;
-                char2 <= SEG_4;
-                char3 <= SEG_A;
+            `MENU_OLED_A: begin
+                char0 <= `SEG_BLANK;
+                char1 <= `SEG_BLANK;
+                char2 <= `SEG_4;
+                char3 <= `SEG_A;
             end
-            MENU_OLED_B: begin
-                char0 <= SEG_BLANK;
-                char1 <= SEG_BLANK;
-                char2 <= SEG_4;
-                char3 <= SEG_B;
+            `MENU_OLED_B: begin
+                char0 <= `SEG_BLANK;
+                char1 <= `SEG_BLANK;
+                char2 <= `SEG_4;
+                char3 <= `SEG_B;
             end
-            MENU_AVI: begin
-                char0 <= SEG_BLANK;
-                char1 <= SEG_BLANK;
-                char2 <= SEG_4;
-                char3 <= SEG_C;
+            `MENU_AVI: begin
+                char0 <= `SEG_BLANK;
+                char1 <= `SEG_BLANK;
+                char2 <= `SEG_4;
+                char3 <= `SEG_C;
             end
-            MENU_DTMF: begin
-                char0 <= SEG_D;
-                char1 <= SEG_T;
-                char2 <= SEG_M;
-                char3 <= SEG_F;
+            `MENU_DTMF: begin
+                char0 <= `SEG_D;
+                char1 <= `SEG_T;
+                char2 <= `SEG_M;
+                char3 <= `SEG_F;
             end
-            MENU_MORSE: begin
-                char0 <= SEG_M;
-                char1 <= SEG_O;
-                char2 <= SEG_R;
-                char3 <= SEG_S;
+            `MENU_MORSE: begin
+                char0 <= `SEG_M;
+                char1 <= `SEG_O;
+                char2 <= `SEG_R;
+                char3 <= `SEG_S;
             end
             
         endcase
@@ -225,32 +225,32 @@ module Top_Student(
         seg <= 7'b1111111;
         an <= 4'b1111;
     
-        if (task_state == MENU_OLED_A) begin
+        if (task_state == `MENU_OLED_A) begin
             oled_data <= task_4a_oled_data;
             led[14] <= task_4a_led;
         end
-        else if (task_state == MENU_OLED_B) begin
+        else if (task_state == `MENU_OLED_B) begin
             oled_data <= task_4b_oled_data;
             led[12] <= task_4b_led;
         end
-        else if (task_state == MENU_AVI) begin
+        else if (task_state == `MENU_AVI) begin
             oled_data <= task_4c_oled_data;
             led[4:0] <= task_4c_led;
             seg <= task_4c_seg;
             an <= 4'b1110;
         end
-        else if (task_state == MENU_DTMF) begin
+        else if (task_state == `MENU_DTMF) begin
             oled_data <= dtmf_oled_data;
             led[15:0] <= dtmf_led;
             seg <= dtmf_seg;
             an <= 4'b1110; 
         end
-        else if (task_state == MENU_MORSE) begin
+        else if (task_state == `MENU_MORSE) begin
             led <= morse_led;
             seg <= morse_seg;
              an <= morse_an;
         end
-        else if (task_state == MENU_INACTIVE) begin
+        else if (task_state == `MENU_INACTIVE) begin
              seg <= menu_seg;
              an <= menu_an;
         end

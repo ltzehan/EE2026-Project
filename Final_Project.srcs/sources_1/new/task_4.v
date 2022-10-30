@@ -20,6 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+`include "constants.vh"
+
 module task_4(
     input CLK,
     input btnU,
@@ -50,14 +52,14 @@ module task_4(
      */
     
     wire border_red, border_orange;
-    draw_box(.pixel(pixel_index), .x1(4), .y1(4), .x2(OLED_W-4), .y2(OLED_H-4), .th(1), .active(border_red));
-    draw_box(.pixel(pixel_index), .x1(8), .y1(8), .x2(OLED_W-8), .y2(OLED_H-8), .th(3), .active(border_orange));
+    draw_box(.pixel(pixel_index), .x1(4), .y1(4), .x2(`OLED_W-4), .y2(`OLED_H-4), .th(1), .active(border_red));
+    draw_box(.pixel(pixel_index), .x1(8), .y1(8), .x2(`OLED_W-8), .y2(`OLED_H-8), .th(3), .active(border_orange));
     
     wire border_green_1, border_green_2, border_green_3, border_green_4;
-    draw_box(.pixel(pixel_index), .x1(12), .y1(12), .x2(OLED_W-12), .y2(OLED_H-12), .th(1), .active(border_green_1));
-    draw_box(.pixel(pixel_index), .x1(14), .y1(14), .x2(OLED_W-14), .y2(OLED_H-14), .th(1), .active(border_green_2));
-    draw_box(.pixel(pixel_index), .x1(16), .y1(16), .x2(OLED_W-16), .y2(OLED_H-16), .th(1), .active(border_green_3));
-    draw_box(.pixel(pixel_index), .x1(18), .y1(18), .x2(OLED_W-18), .y2(OLED_H-18), .th(1), .active(border_green_4));
+    draw_box(.pixel(pixel_index), .x1(12), .y1(12), .x2(`OLED_W-12), .y2(`OLED_H-12), .th(1), .active(border_green_1));
+    draw_box(.pixel(pixel_index), .x1(14), .y1(14), .x2(`OLED_W-14), .y2(`OLED_H-14), .th(1), .active(border_green_2));
+    draw_box(.pixel(pixel_index), .x1(16), .y1(16), .x2(`OLED_W-16), .y2(`OLED_H-16), .th(1), .active(border_green_3));
+    draw_box(.pixel(pixel_index), .x1(18), .y1(18), .x2(`OLED_W-18), .y2(`OLED_H-18), .th(1), .active(border_green_4));
     
     reg [2:0] state = 0;
     reg needs_reset = 0;
@@ -86,19 +88,19 @@ module task_4(
     // Draw borders
     always @(posedge clk25m) begin
        if (border_red)
-           task_4a_oled_data <= OLED_RED;
+           task_4a_oled_data <= `OLED_RED;
        else if (border_orange)
-           task_4a_oled_data <= OLED_ORANGE;
+           task_4a_oled_data <= `OLED_ORANGE;
        else if (border_green_1 && state >= 1)
-           task_4a_oled_data <= OLED_GREEN;
+           task_4a_oled_data <= `OLED_GREEN;
        else if (border_green_2 && state >= 2)
-           task_4a_oled_data <= OLED_GREEN;
+           task_4a_oled_data <= `OLED_GREEN;
        else if (border_green_3 && state >= 3)
-           task_4a_oled_data <= OLED_GREEN;
+           task_4a_oled_data <= `OLED_GREEN;
        else if (border_green_4 && state == 4)
-           task_4a_oled_data <= OLED_GREEN;
+           task_4a_oled_data <= `OLED_GREEN;
        else
-           task_4a_oled_data <= OLED_BLACK;
+           task_4a_oled_data <= `OLED_BLACK;
     end
     
     /**
@@ -133,17 +135,17 @@ module task_4(
     px_to_xy(pixel_index, x, y);
     always @ (posedge CLK) begin
         if (box_1)  
-            task_4b_oled_data <= OLED_RED;
+            task_4b_oled_data <= `OLED_RED;
         else if (box_2)
-            task_4b_oled_data <= OLED_ORANGE;
+            task_4b_oled_data <= `OLED_ORANGE;
         else if (box_3 && step >= 1)
-            task_4b_oled_data <= OLED_GREEN;
+            task_4b_oled_data <= `OLED_GREEN;
         else if (box_4 && step >= 2)
-            task_4b_oled_data <= OLED_GREEN_50;
+            task_4b_oled_data <= `OLED_GREEN_50;
         else if (box_5 && step >= 3)
-            task_4b_oled_data <= OLED_GREEN_10;
+            task_4b_oled_data <= `OLED_GREEN_10;
         else 
-            task_4b_oled_data <= OLED_BLACK;
+            task_4b_oled_data <= `OLED_BLACK;
      end
     
     /**
@@ -165,32 +167,32 @@ module task_4(
         if (mic_ctr == 1_999) begin
             if (mic_peak < 1500) begin
                 task_4c_led <= 5'b00000;
-                task_4c_seg <= SEG_0;
+                task_4c_seg <= `SEG_0;
                 mic_level <= 0;
             end
             else if (mic_peak < 2500) begin
                 task_4c_led <= 5'b00001;
-                task_4c_seg <= SEG_1;
+                task_4c_seg <= `SEG_1;
                 mic_level <= 1;
             end
             else if (mic_peak < 3170) begin
                 task_4c_led <= 5'b00011;
-                task_4c_seg <= SEG_2;
+                task_4c_seg <= `SEG_2;
                 mic_level <= 2;
             end
             else if (mic_peak < 3560) begin
                 task_4c_led <= 5'b00111;
-                task_4c_seg <= SEG_3;
+                task_4c_seg <= `SEG_3;
                 mic_level <= 3;
             end
             else if (mic_peak < 3820) begin
                 task_4c_led <= 5'b01111;
-                task_4c_seg <= SEG_4;
+                task_4c_seg <= `SEG_4;
                 mic_level <= 4;
             end
             else begin
                 task_4c_led <= 5'b11111;
-                task_4c_seg <= SEG_5;
+                task_4c_seg <= `SEG_5;
                 mic_level <= 5;
             end
                 
@@ -200,30 +202,30 @@ module task_4(
     end
     
     always @(posedge CLK) begin
-        task_4c_oled_data <= OLED_BLACK;
+        task_4c_oled_data <= `OLED_BLACK;
         if (mic_level >= 1) begin
             if (box_1 || border_red) 
-                task_4c_oled_data <= OLED_RED;
+                task_4c_oled_data <= `OLED_RED;
         end
         if (mic_level >= 2) begin
             if (box_2 || border_orange)
-                task_4c_oled_data <= OLED_ORANGE;
+                task_4c_oled_data <= `OLED_ORANGE;
         end
         if (mic_level >= 3) begin
             if (box_3 || border_green_1)
-                task_4c_oled_data <= OLED_GREEN;
+                task_4c_oled_data <= `OLED_GREEN;
         end
         if (mic_level >= 4) begin
             if (box_4)
-                task_4c_oled_data <= OLED_GREEN_50;
+                task_4c_oled_data <= `OLED_GREEN_50;
             else if (border_green_2)
-                task_4c_oled_data <= OLED_GREEN;
+                task_4c_oled_data <= `OLED_GREEN;
         end
         if (mic_level == 5) begin
             if (box_5)
-                task_4c_oled_data <= OLED_GREEN_10;
+                task_4c_oled_data <= `OLED_GREEN_10;
             else if (border_green_3)
-                task_4c_oled_data <= OLED_GREEN;
+                task_4c_oled_data <= `OLED_GREEN;
         end
     end
     
