@@ -129,7 +129,7 @@ module dtmf(
      */
     
     // Peak finding
-    localparam THRESHOLD = 32'hF000;
+    localparam THRESHOLD = 32'hFFFF;
     reg [3:0] i;
     reg [2:0] row_idx;
     reg row_valid = 0;

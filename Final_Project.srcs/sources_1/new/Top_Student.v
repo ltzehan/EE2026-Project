@@ -241,13 +241,13 @@ module Top_Student(
             seg <= morse_seg_hold;
             an <= morse_an;
         end
-        else if (task_state == `MENU_LOCK) begin
+        else if (task_state == `MENU_LOCK || task_state == `MENU_UNLOCK) begin
             oled_data <= lock_oled_data;
             led <= morse_led;
             seg <= lock_seg;
             an <= lock_an;
         end
-        else if (task_state == `MENU_INACTIVE || task_state == `MENU_UNLOCK) begin
+        else if (task_state == `MENU_INACTIVE) begin
              seg <= menu_seg;
              an <= menu_an;
         end

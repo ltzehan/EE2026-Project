@@ -21,13 +21,11 @@
 
 
 module unlock_overlay(
-    input CLK,
     input [12:0] pixel,
-    output reg active=0
+    output active
     );
     
-    always @(posedge CLK) begin
-active =
+    assign active =
         (pixel == 13'd879) || (pixel == 13'd880) || (pixel == 13'd881) || (pixel == 13'd882) || (pixel == 13'd883) || (pixel == 13'd884) || (pixel == 13'd920) || (pixel == 13'd921) || 
         (pixel == 13'd922) || (pixel == 13'd923) || (pixel == 13'd924) || (pixel == 13'd925) || (pixel == 13'd975) || (pixel == 13'd976) || (pixel == 13'd977) || (pixel == 13'd978) || 
         (pixel == 13'd979) || (pixel == 13'd980) || (pixel == 13'd992) || (pixel == 13'd993) || (pixel == 13'd1016) || (pixel == 13'd1017) || (pixel == 13'd1018) || (pixel == 13'd1019) || 
@@ -74,6 +72,5 @@ active =
         (pixel == 13'd4468) || (pixel == 13'd4469) || (pixel == 13'd4470) || (pixel == 13'd4471) || (pixel == 13'd4472) || (pixel == 13'd4473) || (pixel == 13'd4474) || (pixel == 13'd4475) || 
         (pixel == 13'd4476) || (pixel == 13'd4477) || (pixel == 13'd4482) || (pixel == 13'd4483) || (pixel == 13'd4484) || (pixel == 13'd4485) || (pixel == 13'd4486) || (pixel == 13'd4487) || 
         (pixel == 13'd4488) || (pixel == 13'd4489) || (pixel == 13'd4490) || (pixel == 13'd4491) || (pixel == 13'd4492) || (pixel == 13'd4493);
-    end
     
 endmodule
