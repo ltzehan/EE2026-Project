@@ -22,10 +22,10 @@
 
 module segment_map(
     input CLK,
-    input [7:0] char0,
-    input [7:0] char1,
-    input [7:0] char2,
-    input [7:0] char3,
+    input [6:0] char0,
+    input [6:0] char1,
+    input [6:0] char2,
+    input [6:0] char3,
     output reg [6:0] seg,
     output reg [3:0] an
     );
