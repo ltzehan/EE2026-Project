@@ -131,6 +131,14 @@ module Top_Student(
         .seg(morse_seg),
         .an(morse_an)
         );
+    
+    // morse_seg should be updated in the same clock cycle as morse_valid
+    // morse_seg_hold will retain the value of the last seg for display purposes
+    reg [6:0] morse_seg_hold = `SEG_BLANK;
+    always @(posedge CLK) begin
+        if (morse_valid)
+            morse_seg_hold <= morse_seg;
+    end
 
     /**
      *  Tasks 4A-4C
@@ -181,16 +189,19 @@ module Top_Student(
 
     wire [6:0] lock_seg;
     wire [3:0] lock_an;
+    wire [15:0] lock_oled_data;
     lock(
          .CLK(CLK),
          .locking(task_state == `MENU_LOCK),
          .unlocking(task_state == `MENU_UNLOCK),
          .input_valid(morse_valid),
          .input_seg(morse_seg),
-         .btnC(e_btnC),
+         .btnU(e_btnU),
+         .btnD(e_btnD),
          .locked(locked),
          .seg(lock_seg),
-         .an(lock_an)
+         .an(lock_an),
+         .oled_data(lock_oled_data)
          );
     
     /**
@@ -226,19 +237,16 @@ module Top_Student(
         end
         else if (task_state == `MENU_MORSE) begin
             led <= morse_led;
-            seg <= morse_seg;
+            seg <= morse_seg_hold;
             an <= morse_an;
         end
         else if (task_state == `MENU_LOCK) begin
+            oled_data <= lock_oled_data;
             led <= morse_led;
             seg <= lock_seg;
             an <= lock_an;
         end
-        else if (task_state == `MENU_UNLOCK) begin
-            seg <= menu_seg;
-            an <= menu_an;
-        end
-        else if (task_state == `MENU_INACTIVE) begin
+        else if (task_state == `MENU_INACTIVE || task_state == `MENU_UNLOCK) begin
              seg <= menu_seg;
              an <= menu_an;
         end
