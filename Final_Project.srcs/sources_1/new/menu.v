@@ -28,8 +28,10 @@ module menu(
     input btnR,
     input btnC,
     input locked,
+    input [12:0] pixel_index,
     output [6:0] seg,
     output [4:0] an,
+    output [15:0] oled_data,
     output reg [3:0] task_state = `MENU_INACTIVE    // State used for switching outputs
     );
     
@@ -38,6 +40,7 @@ module menu(
      */
     
     reg [3:0] display_state = `MENU_OLED_A;
+    menu_oled_data(CLK, display_state, pixel_index, oled_data);
     
     reg prev_locked = 0;
     always @(posedge CLK) begin
@@ -109,6 +112,12 @@ module menu(
                     char1 <= `SEG_T;
                     char2 <= `SEG_M;
                     char3 <= `SEG_F;
+                end
+                `MENU_TIMER: begin
+                    char0 <= `SEG_T;
+                    char1 <= `SEG_I;
+                    char2 <= `SEG_M;
+                    char3 <= `SEG_E;
                 end
                 `MENU_MORSE: begin
                     char0 <= `SEG_M;

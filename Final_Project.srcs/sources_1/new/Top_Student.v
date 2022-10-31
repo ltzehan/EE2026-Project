@@ -119,10 +119,13 @@ module Top_Student(
     wire [6:0] morse_seg;
     wire [3:0] morse_an;
     wire [15:0] morse_oled_data;
+    
+    wire morse_btn = dh_btnU && (task_state == `MENU_MORSE || task_state == `MENU_LOCK || task_state == `MENU_UNLOCK);
+    
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
-        .in_btn(dh_btnU),
+        .in_btn(morse_btn),
         .in_mic(mic_out),
         .sw(sw[0]),
         .valid(morse_valid),
@@ -189,14 +192,17 @@ module Top_Student(
      
     wire [6:0] menu_seg;
     wire [3:0] menu_an;
+    wire [15:0] menu_oled_data;
     menu(
         .CLK(CLK),
+        .pixel_index(pixel_index),
         .btnL(e_btnL),
         .btnR(e_btnR),
         .btnC(e_btnC),
         .locked(locked),
         .seg(menu_seg),
         .an(menu_an),
+        .oled_data(menu_oled_data),
         .task_state(task_state)
         );
         
@@ -262,6 +268,7 @@ module Top_Student(
             an <= lock_an;
         end
         else if (task_state == `MENU_INACTIVE) begin
+//             oled_data <= menu_oled_data;
              seg <= menu_seg;
              an <= menu_an;
         end

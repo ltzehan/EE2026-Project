@@ -50,8 +50,9 @@
 `define MENU_OLED_B       2
 `define MENU_AVI          3
 `define MENU_DTMF         4
-`define MENU_MORSE        5
-`define MENU_LOCK         6
+`define MENU_TIMER        5
+`define MENU_MORSE        6
+`define MENU_LOCK         7
 `define MENU_UNLOCK       15    // Locked
 
 //
