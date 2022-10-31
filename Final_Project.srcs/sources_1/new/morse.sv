@@ -108,7 +108,6 @@ module morse(
             recv <= '{5{X}};
             idx <= 0;
         end
-
     end
     
     /**

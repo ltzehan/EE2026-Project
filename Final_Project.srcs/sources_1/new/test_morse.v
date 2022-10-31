@@ -33,6 +33,24 @@ module test_morse(
     // 20kHz clock
     wire clk20k;
     fclk #(.khz(20)) clk_20khz(CLK, clk20k);
+    // 6.25MHz clock
+    wire clk6p25m;
+    fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
+
+    reg [15:0] oled_data;
+    wire frame_begin, sending_pixels, sample_pixel;
+    wire [12:0] pixel_index;
+    Oled_Display oled_display(
+        .clk(clk6p25m), 
+        .reset(0), 
+        .frame_begin(frame_begin), 
+        .sending_pixels(sending_pixels),
+        .sample_pixel(sample_pixel),
+        .pixel_index(pixel_index),
+        .pixel_data(oled_data),
+        .cs(JX[0]), .sdin(JX[1]), .sclk(JX[2]), .d_cn(JX[3]), .resn(JX[4]), .vccen(JX[5]), .pmoden(JX[6]),
+        .teststate(0)
+        );
 
     wire [11:0] mic_out;
     Audio_Capture audio_capture(
@@ -50,6 +68,8 @@ module test_morse(
     wire morse_valid;
     wire [5:0] morse_symbol;
     wire [15:0] morse_led;
+    wire [15:0] morse_oled_data;
+
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
@@ -61,7 +81,17 @@ module test_morse(
         .led(morse_led)
         );
     
+    morse_oled morse_oled(
+        .CLK(CLK),
+        .btnL(btnL),
+        .pixel(pixel_index),
+        .morse_valid(morse_valid),
+        .morse_symbol(morse_symbol),
+        .oled_data(morse_oled_data)
+        );
+    
     always @(posedge CLK) begin
+        oled_data <= morse_oled_data;
         led <= morse_led;
     end
 endmodule

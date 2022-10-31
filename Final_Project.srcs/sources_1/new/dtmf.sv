@@ -24,6 +24,7 @@
 
 module dtmf(
     input CLK,
+    input [3:0] task_state,
     input mic_clk,
     input btnL, input btnR,
     input [1:0] sw,
@@ -35,6 +36,26 @@ module dtmf(
     output reg [15:0] led 
     );
 
+    reg [6:0] seg_0 = `SEG_BLANK;
+    reg [6:0] seg_1 = `SEG_BLANK;
+    reg [6:0] seg_2 = `SEG_BLANK;
+    reg [6:0] seg_3 = `SEG_BLANK;
+    // Intentional index reversing
+    segment_map(CLK, seg_3, seg_2, seg_1, seg_0, seg, an);
+
+//    reg [3:0] prev_task_state;
+//    wire RST = (task_state == `MENU_DTMF) && (prev_task_state != `MENU_DTMF);
+//    always @(posedge mic_clk) begin
+//        prev_task_state <= task_state;
+        
+//        if (RST) begin
+//            seg_0 <= `SEG_BLANK;
+//            seg_1 <= `SEG_BLANK;
+//            seg_2 <= `SEG_BLANK;
+//            seg_3 <= `SEG_BLANK;
+//        end
+//    end
+
     /**
      *  Filter
      */
@@ -44,22 +65,22 @@ module dtmf(
     wire [31:0] y1 [7:0];
     wire [31:0] y2 [7:0];
     wire [31:0] power [7:0];
-    wire RST;
-
-    genvar k;
-    generate 
-        for (k = 0; k <= 7; k = k+1) begin
-            goertzel_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_v2 (mic_clk, RST, mic, y1[k], y2[k]);
-            goertzel_power_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_power_v2 (mic_clk, y1[k], y2[k], power[k]);
-        end
-    endgenerate
     
     // Sample counter
     reg [8:0] ctr = 0;
-    assign RST = (ctr == 0);
+//    wire RST_filter = (ctr == 0) || RST;
+    wire RST_filter = (ctr == 0);
     always @(posedge mic_clk) begin
          ctr <= (ctr == SIZE) ? 0 : ctr+1;       
     end
+    
+    genvar k;
+    generate 
+        for (k = 0; k <= 7; k = k+1) begin
+            goertzel_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_v2 (mic_clk, RST_filter, mic, y1[k], y2[k]);
+            goertzel_power_v2 #(.k(BINS[k]), .N(SIZE)) goertzel_power_v2 (mic_clk, y1[k], y2[k], power[k]);
+        end
+    endgenerate
     
     /**
      *  Spectra
@@ -131,21 +152,14 @@ module dtmf(
     reg has_updated = 0;
     
     // 7-segment
-    reg [15:0] idx;
+    reg [15:0] idx = 0;
     localparam [6:0] dtmf_seg [0:15] = {
                                         `SEG_1, `SEG_2, `SEG_3, `SEG_A,
                                         `SEG_4, `SEG_5, `SEG_6, `SEG_B,
                                         `SEG_7, `SEG_8, `SEG_9, `SEG_C,
                                         `SEG_ASTR, `SEG_0, `SEG_HASH, `SEG_D
                                        };
-    reg [15:0] clear_ctr;
-    
-    reg [6:0] seg_0 = `SEG_BLANK;
-    reg [6:0] seg_1 = `SEG_BLANK;
-    reg [6:0] seg_2 = `SEG_BLANK;
-    reg [6:0] seg_3 = `SEG_BLANK;
-    // Intentional index reversing
-    segment_map(CLK, seg_3, seg_2, seg_1, seg_0, seg, an);
+    reg [15:0] clear_ctr = 0;
     
     always @(posedge mic_clk) begin
         // Peak detector

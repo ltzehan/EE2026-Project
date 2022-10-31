@@ -22,8 +22,7 @@
 
 module lock(
     input CLK,
-    input locking,
-    input unlocking,
+    input [3:0] task_state,
     input input_valid,
     input [5:0] input_symbol,
     input btnL,
@@ -34,11 +33,19 @@ module lock(
     output [3:0] an,
     output reg [15:0] oled_data
     );
+    
+    wire locking = task_state == `MENU_LOCK;
+    wire unlocking = task_state == `MENU_UNLOCK;
+    reg [3:0] prev_task_state;
+    wire RST = (task_state == `MENU_LOCK) && (prev_task_state != `MENU_LOCK);
+    always @(posedge CLK) begin
+        prev_task_state <= task_state;
+    end
 
-    reg [5:0] char_0 = `SEG_BLANK;
-    reg [5:0] char_1 = `SEG_S;
-    reg [5:0] char_2 = `SEG_E;
-    reg [5:0] char_3 = `SEG_T;
+    reg [6:0] char_0 = `SEG_BLANK;
+    reg [6:0] char_1 = `SEG_S;
+    reg [6:0] char_2 = `SEG_E;
+    reg [6:0] char_3 = `SEG_T;
     segment_map(CLK, char_0, char_1, char_2, char_3, seg, an);
     
     /**
@@ -78,6 +85,23 @@ module lock(
     reg [31:0] delay_ctr = 0;
     always @(posedge CLK) begin
         prev_input_valid <= input_valid;
+         
+        if (RST) begin
+            char_0 <= `SEG_BLANK;
+            char_1 <= `SEG_S;
+            char_2 <= `SEG_E;
+            char_3 <= `SEG_T;
+            idx <= 0;
+            symbol_0 <= 0;
+            symbol_1 <= 0;
+            symbol_2 <= 0;
+            symbol_3 <= 0;
+            pass_0 <= 0;
+            pass_1 <= 0;
+            pass_2 <= 0;
+            pass_3 <= 0;
+            delay_ctr <= 0;
+        end
          
         if (locking) begin
             char_0 <= `SEG_BLANK;

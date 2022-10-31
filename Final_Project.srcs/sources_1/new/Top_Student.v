@@ -84,16 +84,19 @@ module Top_Student(
         .teststate(0)
         );
 
+    wire [3:0] task_state;
+
     /**
      *  DTMF
      */
-     
+    
     wire [6:0] dtmf_seg;
     wire [3:0] dtmf_an;
     wire [15:0] dtmf_led;
     wire [15:0] dtmf_oled_data;
     dtmf dtmf(
         .CLK(CLK),
+        .task_state(task_state),
         .mic_clk(clk20k),
         .btnL(e_btnL),
         .btnR(e_btnR),
@@ -115,6 +118,7 @@ module Top_Student(
     wire [15:0] morse_led;
     wire [6:0] morse_seg;
     wire [3:0] morse_an;
+    wire [15:0] morse_oled_data;
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
@@ -132,6 +136,15 @@ module Top_Student(
         .symbol(morse_symbol),
         .seg(morse_seg),
         .an(morse_an)
+        );
+    
+    morse_oled morse_oled(
+        .CLK(CLK),
+        .btnL(btnL),
+        .pixel(pixel_index),
+        .morse_valid(morse_valid),
+        .morse_symbol(morse_symbol),
+        .oled_data(morse_oled_data)
         );
     
     // morse_seg should be updated in the same clock cycle as morse_valid
@@ -176,7 +189,6 @@ module Top_Student(
      
     wire [6:0] menu_seg;
     wire [3:0] menu_an;
-    wire [3:0] task_state;
     menu(
         .CLK(CLK),
         .btnL(e_btnL),
@@ -194,8 +206,7 @@ module Top_Student(
     wire [15:0] lock_oled_data;
     lock(
          .CLK(CLK),
-         .locking(task_state == `MENU_LOCK),
-         .unlocking(task_state == `MENU_UNLOCK),
+         .task_state(task_state),
          .input_valid(morse_valid),
          .input_symbol(morse_symbol),
          .pixel_index(pixel_index),
@@ -239,6 +250,7 @@ module Top_Student(
             an <= dtmf_an; 
         end
         else if (task_state == `MENU_MORSE) begin
+            oled_data <= morse_oled_data;
             led <= morse_led;
             seg <= morse_seg_hold;
             an <= morse_an;

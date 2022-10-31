@@ -23,11 +23,10 @@
 module dtmf_overlay(
     input CLK,
     input [12:0] pixel,
-    output reg active
+    output active
     );
     
-    always @(posedge CLK) begin
-        if (
+    assign active =
             (pixel == 13'd291) ||
             (pixel == 13'd292) ||
             (pixel == 13'd304) ||
@@ -337,10 +336,6 @@ module dtmf_overlay(
             (pixel == 13'd2011) ||
             (pixel == 13'd2012) ||
             (pixel == 13'd2104) ||
-            (pixel == 13'd2108)
-        )
-            active <= 1;
-        else
-            active <= 0;
-    end
+            (pixel == 13'd2108);
+
 endmodule
