@@ -26,7 +26,7 @@ module morse_segment(
     input CLK,
     input valid,
     input [5:0] symbol,
-    output reg [6:0] seg=`SEG_BLANK,
+    output [6:0] seg,
     output reg [3:0] an=4'b1110
     );
         
@@ -39,13 +39,6 @@ module morse_segment(
         `SEG_0, `SEG_1, `SEG_2, `SEG_3, `SEG_4, `SEG_5, `SEG_6, `SEG_7, `SEG_8, `SEG_9
     };
     
-    always @(posedge CLK) begin
-        if (valid) begin
-            if (symbol >= 40)
-                seg <= `SEG_BLANK;
-            else
-                seg <= lut[symbol];
-        end
-    end
+    assign seg = (valid && symbol < 40) ? lut[symbol] : `SEG_BLANK; 
     
 endmodule

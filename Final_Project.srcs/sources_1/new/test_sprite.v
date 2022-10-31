@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 19.10.2022 21:08:21
+// Create Date: 30.10.2022 23:19:33
 // Design Name: 
-// Module Name: test_dtmf
+// Module Name: test_sprite
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,40 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module test_dtmf(
+module test_sprite(
     input CLK,
     input [1:0] sw,
     input btnU, input btnL, input btnR, input btnD, input btnC, 
     input J_MIC3_Pin3, output J_MIC3_Pin1, output J_MIC3_Pin4,
     output [6:0] JX,
     output reg [15:0] led,
-    output reg [6:0] seg, output reg [3:0] an=0
+    output reg [6:0] seg, output reg [3:0] an
     );
     
-    // 20kHz clock
-    wire clk20k;
-    fclk #(.khz(20)) clk_20khz(CLK, clk20k);
     // 6.25MHz clock
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
-    
-    wire d_btnU, d_btnL, d_btnR, d_btnD, d_btnC; // debounced
-    debouncer(CLK, btnL, d_btnL);
-    debouncer(CLK, btnR, d_btnR);
-    
-    wire e_btnU, e_btnL, e_btnR, e_btnD, e_btnC; // rising edge
-    edge_detector(CLK, d_btnL, e_btnL);
-    edge_detector(CLK, d_btnR, e_btnR);
-    
-    wire [11:0] mic_out;
-    Audio_Capture audio_capture(
-        .CLK(CLK),
-        .cs(clk20k),
-        .MISO(J_MIC3_Pin3),
-        .clk_samp(J_MIC3_Pin1),
-        .sclk(J_MIC3_Pin4),
-        .sample(mic_out)
-        );
     
     reg [15:0] oled_data;
     wire frame_begin, sending_pixels, sample_pixel;
@@ -70,33 +49,30 @@ module test_dtmf(
         .teststate(0)
         );
 
-    /**
-     *  Goertzel Filter
-     */
-     
-    wire [6:0] dtmf_seg;
-    wire [3:0] dtmf_an;
-    wire [15:0] dtmf_led;
-    wire [15:0] dtmf_oled_data;
-    dtmf dtmf(
-        .CLK(CLK),
-        .mic_clk(clk20k),
-        .btnL(e_btnL),
-        .btnR(e_btnR),
-        .sw(sw[1:0]),
-        .mic(mic_out),
-        .pixel(pixel_index),
-        .oled_data(dtmf_oled_data),
-        .seg(dtmf_seg),
-        .an(dtmf_an),
-        .led(dtmf_led)
-        );
+    wire [15:0] confirm_oled_data;
+    lock_confirm_oled(CLK, pixel_index, confirm_oled_data);
+    
+    wire overlay_active;
+    unlock_overlay(CLK, pixel_index, overlay_active);
+    
+    wire a_active, b_active, c_active, d_active;
+    oled_text_sprite #(.OFFSET(28*96+16)) (clk6p25m, pixel_index, 1, a_active);
+    oled_text_sprite #(.OFFSET(28*96+32)) (clk6p25m, pixel_index, 2, b_active);
+    oled_text_sprite #(.OFFSET(28*96+48)) (clk6p25m, pixel_index, 3, c_active);
+    oled_text_sprite #(.OFFSET(28*96+64)) (clk6p25m, pixel_index, 4, d_active);
     
     always @(posedge CLK) begin
-        oled_data <= dtmf_oled_data;
-        seg <= dtmf_seg;
-        an <= dtmf_an;
-        led <= dtmf_led;
+        if (sw[0]) begin
+            oled_data <= `OLED_BLACK;
+            if (overlay_active) oled_data <= `OLED_WHITE;
+            if (a_active) oled_data <= `OLED_GREEN;
+            if (b_active) oled_data <= `OLED_RED;
+            if (c_active) oled_data <= `OLED_GREEN;
+            if (d_active) oled_data <= `OLED_ORANGE;
+        end
+        else begin
+            oled_data <= confirm_oled_data;
+        end
     end
     
 endmodule

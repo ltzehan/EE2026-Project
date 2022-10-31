@@ -89,6 +89,7 @@ module Top_Student(
      */
      
     wire [6:0] dtmf_seg;
+    wire [3:0] dtmf_an;
     wire [15:0] dtmf_led;
     wire [15:0] dtmf_oled_data;
     dtmf dtmf(
@@ -96,11 +97,12 @@ module Top_Student(
         .mic_clk(clk20k),
         .btnL(e_btnL),
         .btnR(e_btnR),
-        .sw(sw[0]),
+        .sw(sw[1:0]),
         .mic(mic_out),
         .pixel(pixel_index),
         .oled_data(dtmf_oled_data),
         .seg(dtmf_seg),
+        .an(dtmf_an),
         .led(dtmf_led)
         );
         
@@ -131,6 +133,14 @@ module Top_Student(
         .seg(morse_seg),
         .an(morse_an)
         );
+    
+    // morse_seg should be updated in the same clock cycle as morse_valid
+    // morse_seg_hold will retain the value of the last seg for display purposes
+    reg [6:0] morse_seg_hold = `SEG_BLANK;
+    always @(posedge CLK) begin
+        if (morse_valid)
+            morse_seg_hold <= morse_seg;
+    end
 
     /**
      *  Tasks 4A-4C
@@ -162,57 +172,40 @@ module Top_Student(
      *  Menu Logic
      */
      
-     wire [3:0] menu_sel_state;
-     wire [3:0] task_state;
-     menu(
-         .CLK(CLK),
-         .btnL(e_btnL),
-         .btnR(e_btnR),
-         .btnC(e_btnC),
-         .state(menu_sel_state),
-         .task_state(task_state)
-         );
-
-    reg [7:0] char0, char1, char2, char3;
+    wire locked;
+     
     wire [6:0] menu_seg;
     wire [3:0] menu_an;
-    segment_map(CLK, char0, char1, char2, char3, menu_seg, menu_an);
-    
-    always @(posedge CLK) begin
-        case (menu_sel_state)
-            `MENU_OLED_A: begin
-                char0 <= `SEG_BLANK;
-                char1 <= `SEG_BLANK;
-                char2 <= `SEG_4;
-                char3 <= `SEG_A;
-            end
-            `MENU_OLED_B: begin
-                char0 <= `SEG_BLANK;
-                char1 <= `SEG_BLANK;
-                char2 <= `SEG_4;
-                char3 <= `SEG_B;
-            end
-            `MENU_AVI: begin
-                char0 <= `SEG_BLANK;
-                char1 <= `SEG_BLANK;
-                char2 <= `SEG_4;
-                char3 <= `SEG_C;
-            end
-            `MENU_DTMF: begin
-                char0 <= `SEG_D;
-                char1 <= `SEG_T;
-                char2 <= `SEG_M;
-                char3 <= `SEG_F;
-            end
-            `MENU_MORSE: begin
-                char0 <= `SEG_M;
-                char1 <= `SEG_O;
-                char2 <= `SEG_R;
-                char3 <= `SEG_S;
-            end
-            
-        endcase
-    end
+    wire [3:0] task_state;
+    menu(
+        .CLK(CLK),
+        .btnL(e_btnL),
+        .btnR(e_btnR),
+        .btnC(e_btnC),
+        .locked(locked),
+        .seg(menu_seg),
+        .an(menu_an),
+        .task_state(task_state)
+        );
+        
+
+    wire [6:0] lock_seg;
+    wire [3:0] lock_an;
+    wire [15:0] lock_oled_data;
+    lock(
+         .CLK(CLK),
+         .locking(task_state == `MENU_LOCK),
+         .unlocking(task_state == `MENU_UNLOCK),
+         .input_valid(morse_valid),
+         .input_symbol(morse_symbol),
+         .pixel_index(pixel_index),
+         .btnL(e_btnL),
+         .btnR(e_btnR),
+         .locked(locked),
+         .seg(lock_seg),
+         .an(lock_an),
+         .oled_data(lock_oled_data)
+         );
     
     /**
      *  Output Switching
@@ -243,12 +236,18 @@ module Top_Student(
             oled_data <= dtmf_oled_data;
             led[15:0] <= dtmf_led;
             seg <= dtmf_seg;
-            an <= 4'b1110; 
+            an <= dtmf_an; 
         end
         else if (task_state == `MENU_MORSE) begin
             led <= morse_led;
-            seg <= morse_seg;
-             an <= morse_an;
+            seg <= morse_seg_hold;
+            an <= morse_an;
+        end
+        else if (task_state == `MENU_LOCK || task_state == `MENU_UNLOCK) begin
+            oled_data <= lock_oled_data;
+            led <= morse_led;
+            seg <= lock_seg;
+            an <= lock_an;
         end
         else if (task_state == `MENU_INACTIVE) begin
              seg <= menu_seg;

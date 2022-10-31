@@ -26,12 +26,13 @@ module dtmf(
     input CLK,
     input mic_clk,
     input btnL, input btnR,
-    input sw,
+    input [1:0] sw,
     input [11:0] mic,
     input [12:0] pixel,
     output reg [15:0] oled_data,
-    output reg [6:0] seg,
-    output reg [15:0] led
+    output [6:0] seg,
+    output [3:0] an,
+    output reg [15:0] led 
     );
 
     /**
@@ -109,27 +110,12 @@ module dtmf(
         end
     endgenerate
     
-    // Frequency Overlay
-    wire overlay_active;
-    dtmf_overlay dtmf_overlay(CLK, pixel, overlay_active);
-    
-    // OLED colour
-    always @(posedge CLK) begin
-        // Show frequency overlay
-        if (sw && overlay_active)
-            oled_data <= `OLED_WHITE;
-        else if (spectra_active)
-            oled_data <= `OLED_RED;
-        else
-            oled_data <= `OLED_BLACK;
-    end 
-    
     /**
      *  Tone Classification
      */
     
     // Peak finding
-    localparam THRESHOLD = 32'hF000;
+    localparam THRESHOLD = 32'hFFFF;
     reg [3:0] i;
     reg [2:0] row_idx;
     reg row_valid = 0;
@@ -137,6 +123,12 @@ module dtmf(
     reg [2:0] col_idx;
     reg [31:0] col_max_val;
     reg col_valid = 0;
+    wire [3:0] grid_idx = row_idx * 4 + col_idx;
+    
+    // Noise reduction by requiring 4 same classifications before output
+    reg [1:0] last_ctr = 0;
+    reg [3:0] last_grid_idx = 0;
+    reg has_updated = 0;
     
     // 7-segment
     reg [15:0] idx;
@@ -147,6 +139,13 @@ module dtmf(
                                         `SEG_ASTR, `SEG_0, `SEG_HASH, `SEG_D
                                        };
     reg [15:0] clear_ctr;
+    
+    reg [6:0] seg_0 = `SEG_BLANK;
+    reg [6:0] seg_1 = `SEG_BLANK;
+    reg [6:0] seg_2 = `SEG_BLANK;
+    reg [6:0] seg_3 = `SEG_BLANK;
+    // Intentional index reversing
+    segment_map(CLK, seg_3, seg_2, seg_1, seg_0, seg, an);
     
     always @(posedge mic_clk) begin
         // Peak detector
@@ -174,13 +173,32 @@ module dtmf(
             end
             
             if (row_valid && col_valid) begin
-                led[(row_idx * 4) + col_idx] <= 1;
-                seg <= dtmf_seg[(row_idx * 4) + col_idx];
+                last_grid_idx <= grid_idx;
+                if (grid_idx == last_grid_idx) begin
+                    last_ctr <= (last_ctr == 3) ? 3 : last_ctr + 1;
+                    if (last_ctr == 3 && ~has_updated) begin
+                        led[grid_idx] <= 1;
+                        has_updated <= 1;
+                        seg_0 <= dtmf_seg[grid_idx];
+                        seg_1 <= seg_0;
+                        seg_2 <= seg_1;
+                        seg_3 <= seg_2;
+                    end
+                end
+                else begin
+                    last_ctr <= 0;
+                    has_updated <= 0;
+                end
+                
                 clear_ctr <= 0;
+            end
+            else begin
+                last_ctr <= 0;
+                has_updated <= 0;
             end
         end
         
-        // Reset after 1 clock cycle
+        // Reset after 1 sample cycle
         if (ctr == 0) begin
             row_valid <= 0;
             col_valid <= 0;
@@ -190,8 +208,39 @@ module dtmf(
         if (clear_ctr > 4000) begin
             clear_ctr <= 0;
             led <= 0;
-            seg <= `SEG_BLANK;
         end
     end
+    
+    /**
+     *  Display
+     */
+    
+    wire show_grid = sw[1];
+    wire show_overlay = sw[0] && ~sw[1];
+    
+    // Frequency Overlay
+    wire overlay_active;
+    dtmf_overlay dtmf_overlay(CLK, pixel, overlay_active);
+    
+    // Grid
+    wire [15:0] dtmf_grid_oled_data;
+    dtmf_grid_oled(CLK, pixel, row_valid, col_valid, row_idx, col_idx, dtmf_grid_oled_data);
+    
+    // OLED colour
+    always @(posedge CLK) begin
+//        if (show_grid) begin
+//            oled_data <= dtmf_grid_oled_data;
+//        end
+//        else begin
+        // Show frequency overlay
+        if (show_overlay && overlay_active)
+            oled_data <= `OLED_WHITE;
+        else if (spectra_active)
+            oled_data <= `OLED_RED;
+        else
+            oled_data <= `OLED_BLACK;
+//        end
+    end 
+    
     
 endmodule

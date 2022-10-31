@@ -33,32 +33,46 @@ module sim_morse(
         #5 CLK <= ~CLK;
     end
     
+    // 6.25MHz clock
+    wire clk6p25m;
+    fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
+    
+    reg [15:0] pixel_index = 0;
+    always @(posedge clk6p25m)
+        pixel_index <= pixel_index + 1;
+    
+    wire a_active, b_active, c_active, d_active;
+    oled_sprites a(clk6p25m, pixel_index, 16*96+16, 1, a_active);
+    oled_sprites b(clk6p25m, pixel_index, 16*96+32, 2, b_active);
+    oled_sprites c(clk6p25m, pixel_index, 16*96+48, 3, c_active);
+    oled_sprites d(clk6p25m, pixel_index, 16*96+64, 4, d_active);
+    
     // 20kHz clock
-    wire sample_clk;
-    fclk #(.khz(0.005)) fclk(CLK, sample_clk);
+//    wire sample_clk;
+//    fclk #(.khz(0.005)) fclk(CLK, sample_clk);
     
-    reg pb_1;
-    wire d_pb_1, dh_pb_1;
-    debouncer db(CLK, pb_1, d_pb_1);
-    debouncer_hold #(.M(1_999)) dbh(CLK, pb_1, dh_pb_1);
+//    reg pb_1;
+//    wire d_pb_1, dh_pb_1;
+//    debouncer db(CLK, pb_1, d_pb_1);
+//    debouncer_hold #(.M(1_999)) dbh(CLK, pb_1, dh_pb_1);
     
-    reg valid;
-    reg [5:0] symbol;
-    wire [6:0] seg;
-    wire [3:0] an;
+//    reg valid;
+//    reg [5:0] symbol;
+//    wire [6:0] seg;
+//    wire [3:0] an;
     
-    initial begin
-        #20;
-        valid <= 1;
-        symbol <= 1;
-        #20;
-        valid <= 0;
-        symbol <= 2;
-        #10;
-        valid <= 1;
-    end
+//    initial begin
+//        #20;
+//        valid <= 1;
+//        symbol <= 1;
+//        #20;
+//        valid <= 0;
+//        symbol <= 2;
+//        #10;
+//        valid <= 1;
+//    end
     
-    morse_segment m(CLK, valid, symbol, seg, an);
+//    morse_segment m(CLK, valid, symbol, seg, an);
     
 //    wire valid;
 //    wire [5:0] symbol;
