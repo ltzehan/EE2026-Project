@@ -192,9 +192,13 @@ module dtmf(
                 
                 clear_ctr <= 0;
             end
+            else begin
+                last_ctr <= 0;
+                has_updated <= 0;
+            end
         end
         
-        // Reset after 1 clock cycle
+        // Reset after 1 sample cycle
         if (ctr == 0) begin
             row_valid <= 0;
             col_valid <= 0;
