@@ -20,6 +20,7 @@
 module Top_Student(
     input CLK,
     input [1:0] sw,
+    input sw15,
     input btnU, input btnL, input btnR, input btnD, input btnC, 
     input J_MIC3_Pin3, output J_MIC3_Pin1, output J_MIC3_Pin4,
     output [6:0] JX,
@@ -33,6 +34,9 @@ module Top_Student(
     // 6.25MHz clock
     wire clk6p25m;
     fclk #(.khz(6250)) clk_6p25mhz(CLK, clk6p25m);
+    //1khz clk
+    wire clk1k;
+    fclk #(.khz(1)) clk_1khz(CLK, clk1k);
 
     /**
      *  Inputs
@@ -90,6 +94,7 @@ module Top_Student(
      *  DTMF
      */
     
+    wire dtmf_active = task_state == `MENU_DTMF;
     wire [6:0] dtmf_seg;
     wire [3:0] dtmf_an;
     wire [15:0] dtmf_led;
@@ -98,8 +103,8 @@ module Top_Student(
         .CLK(CLK),
         .task_state(task_state),
         .mic_clk(clk20k),
-        .btnL(e_btnL),
-        .btnR(e_btnR),
+        .btnL(e_btnL && dtmf_active),
+        .btnR(e_btnR && dtmf_active),
         .sw(sw[1:0]),
         .mic(mic_out),
         .pixel(pixel_index),
@@ -110,27 +115,59 @@ module Top_Student(
         );
         
     /**
+     * Stopwatch
+     */
+    wire stopwatch_active = task_state == `MENU_TIMER;
+    wire [15:0] watch_oled_data;
+    wire [3:0] watch_an;
+    wire [6:0] min0_seg;
+    wire [6:0] min1_seg;
+    wire [6:0] sec0_seg;
+    wire [6:0] sec1_seg;
+    wire [6:0] watch_seg;
+        
+    stopwatch(
+        .CLK(CLK),
+        .BTNU(btnU && stopwatch_active),
+        .BTND(btnD && stopwatch_active),
+        .BTNL(e_btnL && stopwatch_active),
+        .BTNR(btnR && stopwatch_active),
+        .clk1k(clk1k),
+        .pixel(pixel_index),
+        .watch_oled_data(watch_oled_data),
+        .an(watch_an),
+        .min0(min0_seg),
+        .min1(min1_seg),
+        .sec0(sec0_seg),
+        .sec1(sec1_seg)
+        );
+
+    segment_map watch(CLK, min0_seg, min1_seg, sec0_seg, sec1_seg, watch_seg, watch_an);
+        
+    /**
      *  Morse Decoder
      */
 
+    wire morse_active = task_state == `MENU_MORSE || task_state == `MENU_LOCK || task_state == `MENU_UNLOCK;
     wire morse_valid;
     wire [5:0] morse_symbol;
     wire [15:0] morse_led;
     wire [6:0] morse_seg;
     wire [3:0] morse_an;
     wire [15:0] morse_oled_data;
-    
-    wire morse_btn = dh_btnU && (task_state == `MENU_MORSE || task_state == `MENU_LOCK || task_state == `MENU_UNLOCK);
+    wire [15:0] morse_sec_oled_data;
+    wire [9:0] recv_packed;
     
     morse morse(
         .CLK(CLK),
         .sample_clk(clk20k),
-        .in_btn(morse_btn),
-        .in_mic(mic_out),
+        .in_btn(dh_btnU && morse_active),
+        .in_mic(morse_active ? mic_out : 0),
         .sw(sw[0]),
         .valid(morse_valid),
         .symbol(morse_symbol),
-        .led(morse_led)
+        .led(morse_led),
+        .morse_data(recv_packed)
         );
         
     morse_segment morse_segment(
@@ -149,6 +186,13 @@ module Top_Student(
         .morse_symbol(morse_symbol),
         .oled_data(morse_oled_data)
         );
+        
+    morse_sec_oled(
+        .CLK(CLK),
+        .recv_packed(recv_packed),
+        .pixel(pixel_index),
+        .morse_oled_data(morse_sec_oled_data)
+        );
     
     // morse_seg should be updated in the same clock cycle as morse_valid
     // morse_seg_hold will retain the value of the last seg for display purposes
@@ -162,6 +206,7 @@ module Top_Student(
      *  Tasks 4A-4C
      */
     
+    wire task_4_active = task_state == `MENU_OLED_A || task_state == `MENU_OLED_B || task_state == `MENU_AVI;
     wire task_4a_led;
     wire task_4b_led;
     wire [4:0] task_4c_led;
@@ -171,8 +216,8 @@ module Top_Student(
     wire [6:0] task_4c_seg;
     task_4(
         .CLK(CLK),
-        .btnU(e_btnU),
-        .btnD(btnD),
+        .btnU(e_btnU && task_4_active),
+        .btnD(btnD && task_4_active),
         .pixel_index(pixel_index),
         .mic_out(mic_out),
         .task_4a_led(task_4a_led),
@@ -256,10 +301,15 @@ module Top_Student(
             an <= dtmf_an; 
         end
         else if (task_state == `MENU_MORSE) begin
-            oled_data <= morse_oled_data;
+            oled_data <= (sw15) ? morse_sec_oled_data : morse_oled_data;
             led <= morse_led;
             seg <= morse_seg_hold;
             an <= morse_an;
+        end
+        else if (task_state == `MENU_TIMER) begin
+             seg <= watch_seg;
+             an <= watch_an;
+             oled_data <= watch_oled_data;
         end
         else if (task_state == `MENU_LOCK || task_state == `MENU_UNLOCK) begin
             oled_data <= lock_oled_data;
@@ -268,7 +318,7 @@ module Top_Student(
             an <= lock_an;
         end
         else if (task_state == `MENU_INACTIVE) begin
-//             oled_data <= menu_oled_data;
+             oled_data <= menu_oled_data;
              seg <= menu_seg;
              an <= menu_an;
         end

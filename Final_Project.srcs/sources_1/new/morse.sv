@@ -28,7 +28,8 @@ module morse(
     input sw,
     output reg valid=0,
     output reg [5:0] symbol=6'bx,
-    output reg [15:0] led
+    output reg [15:0] led,
+    output reg [9:0] morse_data
     );
     
     // Coutner scaling for time unit
@@ -73,6 +74,8 @@ module morse(
     localparam DASH = 2'b11;
     reg [1:0] recv [0:4] = '{5{2'b0}};
     wire [9:0] recv_packed = {>>{recv}}; 
+    
+    assign morse_data = recv_packed;
     
     reg [2:0] idx = 0;
     // Counter for cycles at current level 
