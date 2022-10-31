@@ -89,6 +89,7 @@ module Top_Student(
      */
      
     wire [6:0] dtmf_seg;
+    wire [3:0] dtmf_an;
     wire [15:0] dtmf_led;
     wire [15:0] dtmf_oled_data;
     dtmf dtmf(
@@ -101,6 +102,7 @@ module Top_Student(
         .pixel(pixel_index),
         .oled_data(dtmf_oled_data),
         .seg(dtmf_seg),
+        .an(dtmf_an),
         .led(dtmf_led)
         );
         
@@ -234,7 +236,7 @@ module Top_Student(
             oled_data <= dtmf_oled_data;
             led[15:0] <= dtmf_led;
             seg <= dtmf_seg;
-            an <= 4'b1110; 
+            an <= dtmf_an; 
         end
         else if (task_state == `MENU_MORSE) begin
             led <= morse_led;

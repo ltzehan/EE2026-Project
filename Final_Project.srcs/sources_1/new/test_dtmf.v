@@ -74,25 +74,28 @@ module test_dtmf(
      *  Goertzel Filter
      */
      
-    wire [15:0] dtmf_led;
     wire [6:0] dtmf_seg;
+    wire [3:0] dtmf_an;
+    wire [15:0] dtmf_led;
     wire [15:0] dtmf_oled_data;
-    goertzel_wrapper(
+    dtmf dtmf(
         .CLK(CLK),
         .mic_clk(clk20k),
-        .btnL(d_btnL),
-        .btnR(d_btnR),
-        .sw(sw[0]),
+        .btnL(e_btnL),
+        .btnR(e_btnR),
+        .sw(sw[1:0]),
         .mic(mic_out),
         .pixel(pixel_index),
-        .seg(dtmf_seg),
         .oled_data(dtmf_oled_data),
+        .seg(dtmf_seg),
+        .an(dtmf_an),
         .led(dtmf_led)
         );
     
     always @(posedge CLK) begin
         oled_data <= dtmf_oled_data;
         seg <= dtmf_seg;
+        an <= dtmf_an;
         led <= dtmf_led;
     end
     
