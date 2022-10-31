@@ -26,8 +26,8 @@ module lock(
     input unlocking,
     input input_valid,
     input [5:0] input_symbol,
-    input btnU,
-    input btnD,
+    input btnL,
+    input btnR,
     input [12:0] pixel_index,
     output reg locked=0,
     output [6:0] seg,
@@ -35,7 +35,11 @@ module lock(
     output reg [15:0] oled_data
     );
 
-    segment_map(CLK, `SEG_BLANK, `SEG_S, `SEG_E, `SEG_T, seg, an);
+    reg [5:0] char_0 = `SEG_BLANK;
+    reg [5:0] char_1 = `SEG_S;
+    reg [5:0] char_2 = `SEG_E;
+    reg [5:0] char_3 = `SEG_T;
+    segment_map(CLK, char_0, char_1, char_2, char_3, seg, an);
     
     /**
      *  Locking logic
@@ -63,17 +67,25 @@ module lock(
     wire [15:0] confirm_oled_data;
     lock_confirm_oled(CLK, pixel_index, confirm_oled_data);
     
+    wire [15:0] wrong_pass_oled_data;
+    wrong_pass_oled(CLK, pixel_index, wrong_pass_oled_data);
+    
     wire unlock_overlay_active, lock_overlay_active;
     unlock_overlay(pixel_index, unlock_overlay_active);
     lock_overlay(pixel_index, lock_overlay_active);
     
     localparam DELAY_CNT = 50_000_000; 
-    reg [31:0] confirm_delay_ctr = 0;
+    reg [31:0] delay_ctr = 0;
     always @(posedge CLK) begin
         prev_input_valid <= input_valid;
          
         if (locking) begin
-            if (confirm_delay_ctr == DELAY_CNT)
+            char_0 <= `SEG_BLANK;
+            char_1 <= `SEG_S;
+            char_2 <= `SEG_E;
+            char_3 <= `SEG_T;
+
+            if (delay_ctr == DELAY_CNT)
                 oled_data <= confirm_oled_data;
             else begin
                 if (active_1 || active_2 || active_3 || active_4 || lock_overlay_active)
@@ -83,24 +95,24 @@ module lock(
             end
         
             if (idx == 4) begin
-                confirm_delay_ctr <= (confirm_delay_ctr == DELAY_CNT) ? DELAY_CNT : confirm_delay_ctr+1;
+                delay_ctr <= (delay_ctr == DELAY_CNT) ? DELAY_CNT : delay_ctr+1;
                 
-                // Wait for btnD to confirm password or btnU to reset    
-                if (btnU) begin
+                // Wait for btnR to confirm password or btnL to reset    
+                if (btnR) begin
                     locked <= 1;
                     pass_0 <= symbol_0;
                     pass_1 <= symbol_1;
                     pass_2 <= symbol_2;
                     pass_3 <= symbol_3;
                 end
-                if (btnU || btnD) begin
+                if (btnL || btnR) begin
                     // Reset states
                     idx <= 0;
                     symbol_0 <= `SEG_BLANK;
                     symbol_1 <= `SEG_BLANK;
                     symbol_2 <= `SEG_BLANK;
                     symbol_3 <= `SEG_BLANK;
-                    confirm_delay_ctr <= 0;
+                    delay_ctr <= 0;
                 end
             end
             else begin
@@ -125,6 +137,11 @@ module lock(
             
         end
         else if (unlocking) begin
+            char_0 <= `SEG_P;
+            char_1 <= `SEG_A;
+            char_2 <= `SEG_S;
+            char_3 <= `SEG_S;
+        
             if (active_1 || active_2 || active_3 || active_4 || unlock_overlay_active)
                 oled_data <= `OLED_WHITE;
             else
@@ -139,7 +156,24 @@ module lock(
                     symbol_1 <= `SEG_BLANK;
                     symbol_2 <= `SEG_BLANK;
                     symbol_3 <= `SEG_BLANK;
-                end 
+                end
+                else begin
+                    if (delay_ctr < DELAY_CNT) begin
+                        delay_ctr <= (delay_ctr == DELAY_CNT) ? DELAY_CNT : delay_ctr+1;
+                        oled_data <= wrong_pass_oled_data;
+                    end
+                    else begin
+                        // Reset states
+                        idx <= 0;
+                        symbol_0 <= `SEG_BLANK;
+                        symbol_1 <= `SEG_BLANK;
+                        symbol_2 <= `SEG_BLANK;
+                        symbol_3 <= `SEG_BLANK;
+                        delay_ctr <= 0;
+                    end
+                end
+                
+                
             end
             else begin
                 // Next character

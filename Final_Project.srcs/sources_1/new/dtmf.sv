@@ -26,7 +26,7 @@ module dtmf(
     input CLK,
     input mic_clk,
     input btnL, input btnR,
-    input sw,
+    input [1:0] sw,
     input [11:0] mic,
     input [12:0] pixel,
     output reg [15:0] oled_data,
@@ -109,21 +109,6 @@ module dtmf(
         end
     endgenerate
     
-    // Frequency Overlay
-    wire overlay_active;
-    dtmf_overlay dtmf_overlay(CLK, pixel, overlay_active);
-    
-    // OLED colour
-    always @(posedge CLK) begin
-        // Show frequency overlay
-        if (sw && overlay_active)
-            oled_data <= `OLED_WHITE;
-        else if (spectra_active)
-            oled_data <= `OLED_RED;
-        else
-            oled_data <= `OLED_BLACK;
-    end 
-    
     /**
      *  Tone Classification
      */
@@ -193,5 +178,41 @@ module dtmf(
             seg <= `SEG_BLANK;
         end
     end
+    
+    /**
+     *  Display
+     */
+    
+    wire show_grid = sw[1];
+    wire show_overlay = sw[0] && ~sw[1];
+    
+    // Frequency Overlay
+    wire overlay_active;
+    dtmf_overlay dtmf_overlay(CLK, pixel, overlay_active);
+    
+    // Grid
+    genvar gidx;
+    generate 
+        for (gidx = 0; gidx < 16; gidx = gidx+1) begin
+        
+        end
+    endgenerate
+    
+    // OLED colour
+    always @(posedge CLK) begin
+        if (show_grid) begin
+            
+        end
+        else begin
+            // Show frequency overlay
+            if (show_overlay && overlay_active)
+                oled_data <= `OLED_WHITE;
+            else if (spectra_active)
+                oled_data <= `OLED_RED;
+            else
+                oled_data <= `OLED_BLACK;
+        end
+    end 
+    
     
 endmodule
